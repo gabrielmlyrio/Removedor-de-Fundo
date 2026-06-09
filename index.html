@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Fundo Trozoba</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1e1e1e;
+      --border: #2e2e2e;
+      --text: #f0f0f0;
+      --muted: #9a9a9a;
+      --gold: #d4af37;
+      --gold-light: #f0cc55;
+      --sea: #2e8b57;
+      --sea-light: #3cb371;
+      --accent: var(--sea);
+      --accent-hover: var(--sea-light);
+      --danger: #e74c3c;
+      --checker-a: #808080;
+      --checker-b: #1a1a1a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+    }
+
+    header {
+      margin-bottom: 24px;
+      padding: 20px 22px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #121212 55%, #0d1f14 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand-logo {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 12px;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+    }
+
+    .brand-text h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .brand-text h1 .remove {
+      color: var(--sea-light);
+    }
+
+    .brand-text h1 .fundo {
+      color: var(--gold-light);
+    }
+
+    .brand-text h1 .trozoba {
+      color: #ffffff;
+      text-shadow: 0 0 18px rgba(46, 139, 87, 0.35);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .canvas-wrap.bg-gray-black { --checker-a: #808080; --checker-b: #1a1a1a; }
+    .canvas-wrap.bg-white-gray { --checker-a: #ffffff; --checker-b: #c0c0c0; }
+    .canvas-wrap.bg-red-black { --checker-a: #d32f2f; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-blue-black { --checker-a: #2196f3; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-green-black { --checker-a: #2e8b57; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-gold-black { --checker-a: #d4af37; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-white-black { --checker-a: #ffffff; --checker-b: #1a1a1a; }
+    .canvas-wrap.bg-pink-white { --checker-a: #ff69b4; --checker-b: #ffffff; }
+    .canvas-wrap.bg-cyan-navy { --checker-a: #00bcd4; --checker-b: #0d1b2a; }
+    .canvas-wrap.bg-purple-black { --checker-a: #9c27b0; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-orange-black { --checker-a: #ff9800; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-yellow-black { --checker-a: #ffeb3b; --checker-b: #1a1a1a; }
+    .canvas-wrap.bg-magenta-black { --checker-a: #e91e63; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-lime-black { --checker-a: #8bc34a; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-teal-black { --checker-a: #009688; --checker-b: #0a0a0a; }
+    .canvas-wrap.bg-solid-white { --checker-a: #ffffff; --checker-b: #ffffff; }
+    .canvas-wrap.bg-solid-black { --checker-a: #000000; --checker-b: #000000; }
+    .canvas-wrap.bg-solid-sea { --checker-a: #2e8b57; --checker-b: #2e8b57; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+      min-height: calc(100vh - 200px);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .panel h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .control {
+      margin-bottom: 16px;
+    }
+
+    .control:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+
+    .file-picker {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-input-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .file-picker-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface-2);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .file-picker-btn:hover {
+      border-color: var(--sea-light);
+      background: rgba(46, 139, 87, 0.08);
+      color: #ffffff;
+    }
+
+    .file-picker-btn:focus-visible {
+      outline: 2px solid var(--sea-light);
+      outline-offset: 2px;
+    }
+
+    .file-picker-btn svg {
+      flex-shrink: 0;
+      color: var(--gold-light);
+    }
+
+    .file-picker-name {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      word-break: break-all;
+      min-height: 1.2em;
+    }
+
+    .file-picker-name.has-file {
+      color: var(--sea-light);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--sea-light);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .range-value {
+      font-variant-numeric: tabular-nums;
+      font-size: 0.9rem;
+      color: var(--text);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    .color-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #333;
+      flex-shrink: 0;
+    }
+
+    .color-info {
+      font-size: 0.85rem;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .mode-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mode-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .mode-option:has(input:checked) {
+      border-color: var(--accent);
+    }
+
+    .mode-option input {
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+
+    .mode-option strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .mode-option span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sea) 0%, var(--gold) 100%);
+      color: #0a0a0a;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--accent);
+    }
+
+    .btn-discord {
+      background: #5865f2;
+      color: #ffffff;
+    }
+
+    .btn-discord:hover:not(:disabled) {
+      background: #4752c4;
+    }
+
+    .preview-area {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .preview-header {
+      flex: 0 0 auto;
+      margin-bottom: 8px;
+    }
+
+    .preview-header h2 {
+      margin-bottom: 0;
+      font-size: 0.8rem;
+    }
+
+    .zoom-bg-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .zoom-bg-inline select {
+      width: 148px;
+      padding: 7px 8px;
+      font-size: 0.78rem;
+    }
+
+    .preview-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+      flex: 0 0 auto;
+    }
+
+    .preview-area .hint {
+      flex: 0 0 auto;
+      margin-top: 8px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      height: 0;
+      min-height: 480px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .zoom-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--border);
+      flex: 0 0 auto;
+    }
+
+    .zoom-bar button {
+      min-width: 34px;
+      padding: 7px 10px;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .zoom-btn-small {
+      font-size: 0.78rem !important;
+      padding: 7px 10px !important;
+      min-width: auto !important;
+    }
+
+    #zoomSlider {
+      flex: 1;
+      min-width: 120px;
+      accent-color: var(--gold);
+    }
+
+    .zoom-label {
+      font-size: 0.82rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--gold-light);
+      min-width: 58px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .zoom-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .zoom-toggle input {
+      accent-color: var(--sea-light);
+    }
+
+    .zoom-viewport {
+      position: relative;
+      flex: 1 1 auto;
+      height: 0;
+      min-height: 0;
+      overflow: scroll;
+      cursor: crosshair;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable both-edges;
+      scrollbar-width: auto;
+      scrollbar-color: var(--sea-light) #101010;
+      background:
+        linear-gradient(45deg, var(--checker-a) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-a) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-a) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker-a) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      background-color: var(--checker-b);
+      background-attachment: local;
+    }
+
+    .zoom-viewport::-webkit-scrollbar {
+      width: 18px;
+      height: 18px;
+    }
+
+    .zoom-viewport::-webkit-scrollbar-track {
+      background: #101010;
+      border: 1px solid var(--border);
+    }
+
+    .zoom-viewport::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--sea-light) 0%, var(--sea) 100%);
+      border-radius: 10px;
+      border: 4px solid #101010;
+      min-height: 56px;
+      min-width: 56px;
+    }
+
+    .zoom-viewport::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%);
+    }
+
+    .zoom-viewport::-webkit-scrollbar-thumb:active {
+      background: #ffffff;
+    }
+
+    .zoom-viewport::-webkit-scrollbar-corner {
+      background: #101010;
+      border: 1px solid var(--border);
+    }
+
+    .zoom-viewport.is-panning {
+      cursor: grabbing;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      right: 14px;
+      bottom: 10px;
+      z-index: 5;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .zoom-viewport.can-scroll .scroll-hint {
+      opacity: 1;
+    }
+
+    .zoom-stage {
+      display: none;
+      position: relative;
+      margin: 0;
+      padding: 16px;
+      box-sizing: content-box;
+    }
+
+    .zoom-stage.has-image {
+      display: block;
+    }
+
+    .image-frame {
+      position: relative;
+      display: block;
+      line-height: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .pixel-grid-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+      display: none;
+      z-index: 2;
+    }
+
+    .pixel-inspector {
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.45);
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      min-height: 2.2em;
+      flex: 0 0 auto;
+    }
+
+    .pixel-inspector.active {
+      color: var(--text);
+    }
+
+    .pixel-inspector .alpha-low {
+      color: var(--danger);
+    }
+
+    .drop-zone {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--muted);
+      pointer-events: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .drop-zone strong {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    canvas {
+      display: block;
+      cursor: crosshair;
+      position: relative;
+      z-index: 1;
+      max-width: none !important;
+      max-height: none !important;
+    }
+
+    canvas.pixelated {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    canvas.hidden {
+      display: none;
+    }
+
+    .hint {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .hint kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-family: inherit;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      min-height: 1.2em;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <img class="brand-logo" src="icon.png" alt="Ícone Remove Fundo Trozoba">
+      <div class="brand-text">
+        <h1>
+          <span class="remove">Remove</span>
+          <span class="fundo">Fundo</span>
+          <span class="trozoba">Trozoba</span>
+        </h1>
+        <p class="subtitle">Carregue uma imagem, clique na cor do fundo e remova com tolerância ajustável.</p>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>Controles</h2>
+
+        <div class="control">
+          <label>Imagem</label>
+          <div class="file-picker">
+            <input type="file" id="fileInput" class="file-input-hidden" accept="image/png,image/jpeg,image/webp,image/gif">
+            <label for="fileInput" class="file-picker-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 16V4m0 0L8 8m4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Escolher imagem
+            </label>
+            <span class="file-picker-name" id="fileNameDisplay">Nenhum arquivo selecionado</span>
+          </div>
+        </div>
+
+        <div class="control">
+          <label>Cor selecionada</label>
+          <div class="color-preview">
+            <div class="swatch" id="colorSwatch"></div>
+            <div class="color-info" id="colorInfo">Clique na imagem para escolher</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <div class="range-row">
+            <label for="tolerance">Tolerância</label>
+            <span class="range-value" id="toleranceValue">32</span>
+          </div>
+          <input type="range" id="tolerance" min="0" max="120" value="32">
+        </div>
+
+        <div class="control">
+          <label>Modo de remoção</label>
+          <div class="mode-group">
+            <label class="mode-option">
+              <input type="radio" name="mode" value="edges" checked>
+              <div>
+                <strong>Só bordas</strong>
+                <span>Remove o fundo conectado às bordas da imagem (ideal para sprites).</span>
+              </div>
+            </label>
+            <label class="mode-option">
+              <input type="radio" name="mode" value="all">
+              <div>
+                <strong>Toda a imagem</strong>
+                <span>Remove qualquer pixel com a cor escolhida, inclusive no meio.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="removeBtn" disabled>Remover fundo</button>
+          <button class="btn-secondary" id="resetBtn" disabled>Restaurar original</button>
+        </div>
+
+        <p class="status" id="status"></p>
+      </aside>
+
+      <main class="panel preview-area">
+        <div class="preview-header">
+          <h2>Preview</h2>
+        </div>
+        <div class="canvas-wrap bg-gray-black" id="canvasWrap">
+          <div class="zoom-bar" id="zoomBar">
+            <button type="button" class="btn-secondary" id="zoomOut" title="Diminuir zoom">−</button>
+            <input type="range" id="zoomSlider" min="25" max="6400" value="100" step="25">
+            <button type="button" class="btn-secondary" id="zoomIn" title="Aumentar zoom">+</button>
+            <span class="zoom-label" id="zoomLabel">100%</span>
+            <button type="button" class="btn-secondary zoom-btn-small" id="zoomFit">Ajustar</button>
+            <button type="button" class="btn-secondary zoom-btn-small" id="zoomPixel">1:1</button>
+            <button type="button" class="btn-secondary zoom-btn-small" id="zoomExtreme">Extremo</button>
+            <label class="zoom-toggle">
+              <input type="checkbox" id="pixelGrid" checked>
+              Grade
+            </label>
+            <label class="zoom-bg-inline">
+              Fundo
+              <select id="bgThemeSelect">
+                <optgroup label="Clássicos">
+                  <option value="gray-black">Cinza e preto</option>
+                  <option value="white-gray">Branco e cinza</option>
+                  <option value="white-black">Branco e preto</option>
+                  <option value="red-black">Vermelho e preto</option>
+                </optgroup>
+                <optgroup label="Cores">
+                  <option value="blue-black">Azul e preto</option>
+                  <option value="green-black">Verde e preto</option>
+                  <option value="gold-black">Dourado e preto</option>
+                  <option value="purple-black">Roxo e preto</option>
+                  <option value="orange-black">Laranja e preto</option>
+                  <option value="yellow-black">Amarelo e preto</option>
+                  <option value="magenta-black">Magenta e preto</option>
+                  <option value="pink-white">Rosa e branco</option>
+                  <option value="cyan-navy">Ciano e azul escuro</option>
+                  <option value="lime-black">Lima e preto</option>
+                  <option value="teal-black">Verde-água e preto</option>
+                </optgroup>
+                <optgroup label="Sólidos">
+                  <option value="solid-white">Branco sólido</option>
+                  <option value="solid-black">Preto sólido</option>
+                  <option value="solid-sea">Verde mar sólido</option>
+                </optgroup>
+              </select>
+            </label>
+          </div>
+          <div class="zoom-viewport" id="zoomViewport">
+            <span class="scroll-hint" id="scrollHint">Arraste as barras ou use Espaço + mouse para navegar</span>
+            <div class="drop-zone" id="dropHint">
+              <strong>Arraste uma imagem aqui</strong>
+              <span>ou use o botão de carregar à esquerda</span>
+            </div>
+            <div class="zoom-stage" id="zoomStage">
+              <div class="image-frame" id="imageFrame">
+                <canvas id="canvas" class="hidden"></canvas>
+                <div class="pixel-grid-overlay" id="pixelGridOverlay"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pixel-inspector" id="pixelInspector">Passe o mouse na imagem para inspecionar pixels</div>
+        </div>
+        <div class="preview-actions">
+          <button class="btn-secondary" id="downloadBtn" disabled>Baixar</button>
+          <button class="btn-discord" id="discordBtn" disabled>Baixar para Discord</button>
+        </div>
+        <p class="hint">Dica: <kbd>conta-gotas</kbd> na imagem · <kbd>scroll</kbd> zoom · <kbd>Espaço</kbd>+arrastar ou botão direito para mover · use <strong>Extremo</strong> e <strong>Grade</strong> para achar falhas.</p>
+      </main>
+    </div>
+  </div>
+
+  <iframe id="discordFrame" name="discordFrame" title="Discord" hidden></iframe>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const colorSwatch = document.getElementById("colorSwatch");
+    const colorInfo = document.getElementById("colorInfo");
+    const toleranceInput = document.getElementById("tolerance");
+    const toleranceValue = document.getElementById("toleranceValue");
+    const removeBtn = document.getElementById("removeBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const discordBtn = document.getElementById("discordBtn");
+    const bgThemeSelect = document.getElementById("bgThemeSelect");
+    const statusEl = document.getElementById("status");
+    const dropHint = document.getElementById("dropHint");
+    const canvasWrap = document.getElementById("canvasWrap");
+    const zoomViewport = document.getElementById("zoomViewport");
+    const zoomStage = document.getElementById("zoomStage");
+    const imageFrame = document.getElementById("imageFrame");
+    const zoomSlider = document.getElementById("zoomSlider");
+    const zoomLabel = document.getElementById("zoomLabel");
+    const pixelGridOverlay = document.getElementById("pixelGridOverlay");
+    const pixelGridToggle = document.getElementById("pixelGrid");
+    const pixelInspector = document.getElementById("pixelInspector");
+    const scrollHint = document.getElementById("scrollHint");
+
+    // Cole aqui a URL do webhook do Discord
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1513926296311304273/4XbpqY13HaK78fYV7z7kQqTcm9S9x0sCd45vS1gRuzy3TdF129H0kMr43hLMgDbI29DR";
+    const DISCORD_MESSAGE = "Imagem enviada pelo Remove Fundo Trozoba";
+    const PREVIEW_THEMES = [
+      "gray-black", "white-gray", "white-black", "red-black",
+      "blue-black", "green-black", "gold-black", "purple-black",
+      "orange-black", "yellow-black", "magenta-black", "pink-white",
+      "cyan-navy", "lime-black", "teal-black",
+      "solid-white", "solid-black", "solid-sea"
+    ];
+
+    let originalImageData = null;
+    let currentImageData = null;
+    let selectedColor = null;
+    let defaultBaseName = "imagem-sem-fundo";
+    let zoomLevel = 100;
+    let isPanning = false;
+    let panMoved = false;
+    let panStartX = 0;
+    let panStartY = 0;
+    let panScrollLeft = 0;
+    let panScrollTop = 0;
+    let spacePressed = false;
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.classList.toggle("error", isError);
+    }
+
+    function updateButtons() {
+      const hasImage = !!originalImageData;
+      const canRemove = hasImage && selectedColor !== null;
+      removeBtn.disabled = !canRemove;
+      resetBtn.disabled = !hasImage;
+      downloadBtn.disabled = !hasImage;
+      discordBtn.disabled = !hasImage;
+    }
+
+    function promptFileName() {
+      const input = prompt("Nome do arquivo de saída:", defaultBaseName);
+      if (input === null) return null;
+
+      let name = input.trim();
+      if (!name) {
+        setStatus("Informe um nome válido para o arquivo.", true);
+        return null;
+      }
+
+      if (!/\.png$/i.test(name)) {
+        name += ".png";
+      }
+
+      return name;
+    }
+
+    function colorDistance(r1, g1, b1, r2, g2, b2) {
+      const dr = r1 - r2;
+      const dg = g1 - g2;
+      const db = b1 - b2;
+      return Math.sqrt(dr * dr + dg * dg + db * db);
+    }
+
+    function matchesColor(r, g, b, a, target, tolerance) {
+      if (a < 10) return true;
+      return colorDistance(r, g, b, target.r, target.g, target.b) <= tolerance;
+    }
+
+    function drawImageData(imageData) {
+      canvas.width = imageData.width;
+      canvas.height = imageData.height;
+      ctx.putImageData(imageData, 0, 0);
+      canvas.classList.remove("hidden");
+      dropHint.style.display = "none";
+      zoomStage.classList.add("has-image");
+      setZoom(zoomLevel, { keepPosition: true });
+    }
+
+    function setZoom(value, { keepPosition = true } = {}) {
+      if (!currentImageData) return;
+      const prevScale = zoomLevel / 100;
+      const next = Math.min(6400, Math.max(25, Math.round(value)));
+      zoomLevel = next;
+      zoomSlider.value = String(zoomLevel);
+      zoomLabel.textContent = `${zoomLevel}%`;
+
+      const scale = zoomLevel / 100;
+      const displayW = Math.round(canvas.width * scale);
+      const displayH = Math.round(canvas.height * scale);
+
+      canvas.style.width = `${displayW}px`;
+      canvas.style.height = `${displayH}px`;
+      imageFrame.style.width = `${displayW}px`;
+      imageFrame.style.height = `${displayH}px`;
+      canvas.classList.toggle("pixelated", zoomLevel >= 200);
+
+      const pad = 32;
+      zoomStage.style.width = `${displayW + pad}px`;
+      zoomStage.style.height = `${displayH + pad}px`;
+
+      if (keepPosition && prevScale > 0 && zoomViewport) {
+        const ratio = scale / prevScale;
+        const centerX = zoomViewport.scrollLeft + zoomViewport.clientWidth / 2;
+        const centerY = zoomViewport.scrollTop + zoomViewport.clientHeight / 2;
+        zoomViewport.scrollLeft = centerX * ratio - zoomViewport.clientWidth / 2;
+        zoomViewport.scrollTop = centerY * ratio - zoomViewport.clientHeight / 2;
+      }
+
+      updatePixelGrid();
+      updateScrollHint();
+    }
+
+    function updateScrollHint() {
+      if (!zoomViewport || !currentImageData) {
+        zoomViewport?.classList.remove("can-scroll");
+        return;
+      }
+
+      const canScrollX = zoomViewport.scrollWidth > zoomViewport.clientWidth + 2;
+      const canScrollY = zoomViewport.scrollHeight > zoomViewport.clientHeight + 2;
+      zoomViewport.classList.toggle("can-scroll", canScrollX || canScrollY);
+    }
+
+    function fitZoomToView() {
+      if (!currentImageData) return;
+      const padding = 32;
+      const availW = Math.max(zoomViewport.clientWidth - padding, 100);
+      const availH = Math.max(zoomViewport.clientHeight - padding, 100);
+      const fitScale = Math.min(availW / canvas.width, availH / canvas.height);
+      setZoom(Math.floor(fitScale * 100), { keepPosition: false });
+      zoomViewport.scrollTop = 0;
+      zoomViewport.scrollLeft = 0;
+    }
+
+    function setZoomOneToOne() {
+      setZoom(100, { keepPosition: false });
+      zoomViewport.scrollTop = 0;
+      zoomViewport.scrollLeft = 0;
+    }
+
+    function setZoomExtreme() {
+      setZoom(3200);
+    }
+
+    function updatePixelGrid() {
+      if (!pixelGridOverlay || !currentImageData) return;
+      const scale = zoomLevel / 100;
+      const show = pixelGridToggle.checked && zoomLevel >= 200;
+      pixelGridOverlay.style.display = show ? "block" : "none";
+      pixelGridOverlay.style.backgroundSize = `${scale}px ${scale}px`;
+    }
+
+    function getCanvasPixelCoords(event) {
+      const rect = canvas.getBoundingClientRect();
+      if (
+        event.clientX < rect.left || event.clientX > rect.right ||
+        event.clientY < rect.top || event.clientY > rect.bottom
+      ) {
+        return null;
+      }
+
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = Math.min(canvas.width - 1, Math.max(0, Math.floor((event.clientX - rect.left) * scaleX)));
+      const y = Math.min(canvas.height - 1, Math.max(0, Math.floor((event.clientY - rect.top) * scaleY)));
+      return { x, y };
+    }
+
+    function inspectPixel(event) {
+      if (!currentImageData) {
+        pixelInspector.textContent = "Passe o mouse na imagem para inspecionar pixels";
+        pixelInspector.classList.remove("active");
+        return;
+      }
+
+      const coords = getCanvasPixelCoords(event);
+      if (!coords) {
+        pixelInspector.textContent = "Passe o mouse na imagem para inspecionar pixels";
+        pixelInspector.classList.remove("active");
+        return;
+      }
+
+      const { x, y } = coords;
+      const i = (y * canvas.width + x) * 4;
+      const data = currentImageData.data;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const a = data[i + 3];
+      const alphaClass = a < 255 ? "alpha-low" : "";
+      const flaw = a > 0 && a < 255 ? " · possível falha de borda" : a === 0 ? " · transparente" : "";
+
+      pixelInspector.classList.add("active");
+      pixelInspector.innerHTML =
+        `Pixel <strong>${x}, ${y}</strong> · ` +
+        `RGBA(<span>${r}, ${g}, ${b}, <span class="${alphaClass}">${a}</span></span>)` +
+        `<span class="${alphaClass}">${flaw}</span>`;
+    }
+
+    function setFileName(name) {
+      fileNameDisplay.textContent = name || "Nenhum arquivo selecionado";
+      fileNameDisplay.classList.toggle("has-file", !!name);
+    }
+
+    function loadFile(file) {
+      if (!file || !file.type.startsWith("image/")) {
+        setStatus("Selecione um arquivo de imagem válido.", true);
+        return;
+      }
+
+      setFileName(file.name);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+
+          originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          currentImageData = new ImageData(
+            new Uint8ClampedArray(originalImageData.data),
+            originalImageData.width,
+            originalImageData.height
+          );
+
+          selectedColor = null;
+          colorSwatch.style.background = "#333";
+          colorInfo.textContent = "Clique na imagem para escolher";
+
+          defaultBaseName = file.name.replace(/\.[^.]+$/, "") + "-sem-fundo";
+
+          drawImageData(currentImageData);
+          fitZoomToView();
+          updateButtons();
+          setStatus("Imagem carregada. Clique na cor do fundo.");
+        };
+        img.onerror = () => setStatus("Não foi possível carregar a imagem.", true);
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function pickColor(event) {
+      if (!currentImageData || panMoved) return;
+
+      const coords = getCanvasPixelCoords(event);
+      if (!coords) return;
+
+      const { x, y } = coords;
+      const index = (y * canvas.width + x) * 4;
+      const data = currentImageData.data;
+
+      selectedColor = {
+        r: data[index],
+        g: data[index + 1],
+        b: data[index + 2],
+        a: data[index + 3]
+      };
+
+      colorSwatch.style.background = `rgba(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b}, ${selectedColor.a / 255})`;
+      colorInfo.textContent = `RGB(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`;
+      updateButtons();
+      setStatus("Cor selecionada. Ajuste a tolerância e clique em Remover fundo.");
+    }
+
+    function removeBackground() {
+      if (!currentImageData || !selectedColor) return;
+
+      const tolerance = Number(toleranceInput.value);
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const width = currentImageData.width;
+      const height = currentImageData.height;
+      const data = new Uint8ClampedArray(currentImageData.data);
+      const removed = new Uint8Array(width * height);
+
+      function tryRemovePixel(x, y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) return false;
+        const idx = y * width + x;
+        if (removed[idx]) return false;
+
+        const i = idx * 4;
+        if (!matchesColor(data[i], data[i + 1], data[i + 2], data[i + 3], selectedColor, tolerance)) {
+          return false;
+        }
+
+        removed[idx] = 1;
+        data[i + 3] = 0;
+        return true;
+      }
+
+      if (mode === "edges") {
+        const queue = [];
+
+        for (let x = 0; x < width; x++) {
+          if (tryRemovePixel(x, 0)) queue.push([x, 0]);
+          if (tryRemovePixel(x, height - 1)) queue.push([x, height - 1]);
+        }
+        for (let y = 0; y < height; y++) {
+          if (tryRemovePixel(0, y)) queue.push([0, y]);
+          if (tryRemovePixel(width - 1, y)) queue.push([width - 1, y]);
+        }
+
+        while (queue.length > 0) {
+          const [x, y] = queue.pop();
+          const neighbors = [
+            [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]
+          ];
+          for (const [nx, ny] of neighbors) {
+            if (tryRemovePixel(nx, ny)) queue.push([nx, ny]);
+          }
+        }
+      } else {
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const idx = y * width + x;
+            const i = idx * 4;
+            if (matchesColor(data[i], data[i + 1], data[i + 2], data[i + 3], selectedColor, tolerance)) {
+              data[i + 3] = 0;
+              removed[idx] = 1;
+            }
+          }
+        }
+      }
+
+      let removedCount = 0;
+      for (let i = 0; i < removed.length; i++) {
+        if (removed[i]) removedCount++;
+      }
+
+      currentImageData = new ImageData(data, width, height);
+      drawImageData(currentImageData);
+      const percent = ((removedCount / (width * height)) * 100).toFixed(1);
+      setStatus(`Fundo removido: ${removedCount.toLocaleString("pt-BR")} pixels (${percent}%).`);
+    }
+
+    function resetImage() {
+      if (!originalImageData) return;
+      currentImageData = new ImageData(
+        new Uint8ClampedArray(originalImageData.data),
+        originalImageData.width,
+        originalImageData.height
+      );
+      drawImageData(currentImageData);
+      setStatus("Imagem restaurada.");
+    }
+
+    function downloadImage() {
+      if (!currentImageData) return;
+
+      const name = promptFileName();
+      if (!name) {
+        setStatus("Download cancelado.");
+        return;
+      }
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        link.click();
+        URL.revokeObjectURL(url);
+        setStatus(`PNG baixado como "${name}".`);
+      }, "image/png");
+    }
+
+    async function sendToDiscord() {
+      if (!currentImageData) return;
+
+      if (DISCORD_WEBHOOK_URL.includes("SEU_ID")) {
+        setStatus("Configure DISCORD_WEBHOOK_URL no código do index.html.", true);
+        return;
+      }
+
+      const name = promptFileName();
+      if (!name) {
+        setStatus("Envio para Discord cancelado.");
+        return;
+      }
+
+      try {
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob((result) => {
+            if (!result) reject(new Error("Falha ao gerar PNG."));
+            else resolve(result);
+          }, "image/png");
+        });
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = DISCORD_WEBHOOK_URL;
+        form.enctype = "multipart/form-data";
+        form.target = "discordFrame";
+
+        const contentInput = document.createElement("input");
+        contentInput.type = "hidden";
+        contentInput.name = "content";
+        contentInput.value = DISCORD_MESSAGE;
+        form.appendChild(contentInput);
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.name = "file";
+        fileInput.style.display = "none";
+        const transfer = new DataTransfer();
+        transfer.items.add(new File([blob], name, { type: "image/png" }));
+        fileInput.files = transfer.files;
+        form.appendChild(fileInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        setStatus(`Imagem enviada ao Discord como "${name}".`);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    function setPreviewBackground(theme) {
+      canvasWrap.classList.remove(...PREVIEW_THEMES.map((item) => `bg-${item}`));
+      canvasWrap.classList.add(`bg-${theme}`);
+    }
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) loadFile(file);
+    });
+
+    function startPan(event) {
+      if (!currentImageData) return;
+      const usePan = event.button === 1 || event.button === 2 || spacePressed;
+      if (!usePan) return;
+
+      event.preventDefault();
+      isPanning = true;
+      panMoved = false;
+      panStartX = event.clientX;
+      panStartY = event.clientY;
+      panScrollLeft = zoomViewport.scrollLeft;
+      panScrollTop = zoomViewport.scrollTop;
+      zoomViewport.classList.add("is-panning");
+    }
+
+    function movePan(event) {
+      if (!isPanning) return;
+      const dx = event.clientX - panStartX;
+      const dy = event.clientY - panStartY;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) panMoved = true;
+      zoomViewport.scrollLeft = panScrollLeft - dx;
+      zoomViewport.scrollTop = panScrollTop - dy;
+    }
+
+    function endPan() {
+      isPanning = false;
+      zoomViewport.classList.remove("is-panning");
+      setTimeout(() => { panMoved = false; }, 0);
+    }
+
+    canvas.addEventListener("click", pickColor);
+    canvas.addEventListener("mousemove", inspectPixel);
+    canvas.addEventListener("mouseleave", () => {
+      pixelInspector.textContent = "Passe o mouse na imagem para inspecionar pixels";
+      pixelInspector.classList.remove("active");
+    });
+
+    zoomViewport.addEventListener("mousedown", startPan);
+    window.addEventListener("mousemove", movePan);
+    window.addEventListener("mouseup", endPan);
+    zoomViewport.addEventListener("contextmenu", (event) => {
+      if (currentImageData) event.preventDefault();
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Space" && !event.repeat) {
+        spacePressed = true;
+        zoomViewport.classList.add("is-panning");
+      }
+    });
+
+    window.addEventListener("keyup", (event) => {
+      if (event.code === "Space") {
+        spacePressed = false;
+        if (!isPanning) zoomViewport.classList.remove("is-panning");
+      }
+    });
+
+    zoomViewport.addEventListener("wheel", (event) => {
+      if (!currentImageData) return;
+      event.preventDefault();
+      const step = event.deltaY > 0 ? -100 : 100;
+      setZoom(zoomLevel + step);
+    }, { passive: false });
+
+    zoomSlider.addEventListener("input", () => setZoom(Number(zoomSlider.value)));
+    document.getElementById("zoomIn").addEventListener("click", () => setZoom(zoomLevel + 100));
+    document.getElementById("zoomOut").addEventListener("click", () => setZoom(zoomLevel - 100));
+    document.getElementById("zoomFit").addEventListener("click", fitZoomToView);
+    document.getElementById("zoomPixel").addEventListener("click", setZoomOneToOne);
+    document.getElementById("zoomExtreme").addEventListener("click", setZoomExtreme);
+    pixelGridToggle.addEventListener("change", updatePixelGrid);
+    window.addEventListener("resize", updateScrollHint);
+
+    toleranceInput.addEventListener("input", () => {
+      toleranceValue.textContent = toleranceInput.value;
+    });
+    removeBtn.addEventListener("click", removeBackground);
+    resetBtn.addEventListener("click", resetImage);
+    downloadBtn.addEventListener("click", downloadImage);
+    discordBtn.addEventListener("click", sendToDiscord);
+    bgThemeSelect.addEventListener("change", () => {
+      setPreviewBackground(bgThemeSelect.value);
+    });
+
+    canvasWrap.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+
+    canvasWrap.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const file = event.dataTransfer.files[0];
+      if (file) loadFile(file);
+    });
+
+    updateButtons();
+  </script>
+</body>
+</html>
