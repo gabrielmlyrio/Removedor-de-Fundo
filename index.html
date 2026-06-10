@@ -111,10 +111,21 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
+      grid-template-columns: 260px minmax(0, 1fr) 240px;
       gap: 16px;
       align-items: stretch;
       min-height: calc(100vh - 200px);
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 260px minmax(0, 1fr);
+      }
+
+      .history-panel {
+        grid-column: 1 / -1;
+        max-height: 280px;
+      }
     }
 
     @media (max-width: 900px) {
@@ -666,6 +677,155 @@
     .status.error {
       color: var(--danger);
     }
+
+    .history-panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .history-list {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+      max-height: calc(100vh - 340px);
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--sea) var(--surface-2);
+    }
+
+    .history-empty {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 24px 8px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+
+    .history-item:hover {
+      border-color: var(--sea-light);
+    }
+
+    .history-item.active {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    .history-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+      background:
+        linear-gradient(45deg, #808080 25%, transparent 25%),
+        linear-gradient(-45deg, #808080 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #808080 75%),
+        linear-gradient(-45deg, transparent 75%, #808080 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+      background-color: #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .history-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .history-meta strong {
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 2px;
+    }
+
+    .history-meta span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-color-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .history-color-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .history-actions {
+      margin-top: 12px;
+      flex: 0 0 auto;
+    }
+
+    .ctx-menu {
+      position: fixed;
+      z-index: 1000;
+      min-width: 180px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .ctx-menu.hidden {
+      display: none;
+    }
+
+    .ctx-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 9px 12px;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 6px;
+    }
+
+    .ctx-menu button:hover {
+      background: var(--surface-2);
+    }
+
+    .ctx-menu button.danger {
+      color: var(--danger);
+    }
+
+    .cache-badge {
+      font-size: 0.72rem;
+      color: var(--sea-light);
+      margin-top: 8px;
+      min-height: 1em;
+    }
   </style>
 </head>
 <body>
@@ -737,12 +897,22 @@
           </div>
         </div>
 
+        <div class="control">
+          <div class="range-row">
+            <label for="smoothStrength">Suavizar bordas</label>
+            <span class="range-value" id="smoothStrengthValue">2</span>
+          </div>
+          <input type="range" id="smoothStrength" min="1" max="8" value="2">
+          <button class="btn-secondary" id="smoothBtn" disabled style="margin-top:10px;width:100%">Suavizar bordas</button>
+        </div>
+
         <div class="actions">
           <button class="btn-primary" id="removeBtn" disabled>Remover fundo</button>
           <button class="btn-secondary" id="resetBtn" disabled>Restaurar original</button>
         </div>
 
         <p class="status" id="status"></p>
+        <p class="cache-badge" id="cacheBadge"></p>
       </aside>
 
       <main class="panel preview-area">
@@ -811,9 +981,24 @@
           <button class="btn-secondary" id="downloadBtn" disabled>Baixar</button>
           <button class="btn-discord" id="discordBtn" disabled>Baixar para Discord</button>
         </div>
-        <p class="hint">Dica: <kbd>conta-gotas</kbd> na imagem · <kbd>scroll</kbd> zoom · <kbd>Espaço</kbd>+arrastar ou botão direito para mover · use <strong>Extremo</strong> e <strong>Grade</strong> para achar falhas.</p>
+        <p class="hint">Dica: <kbd>conta-gotas</kbd> na imagem · <kbd>scroll</kbd> zoom no cursor · <kbd>Espaço</kbd>+arrastar ou botão direito para mover · use <strong>Extremo</strong> e <strong>Grade</strong> para achar falhas.</p>
       </main>
+
+      <aside class="panel history-panel" id="historyPanel">
+        <h2>Histórico de remoções</h2>
+        <div class="history-list" id="historyList">
+          <p class="history-empty" id="historyEmpty">Nenhuma remoção ainda</p>
+        </div>
+        <div class="history-actions">
+          <button class="btn-secondary" id="clearHistoryBtn" disabled style="width:100%">Limpar histórico</button>
+        </div>
+      </aside>
     </div>
+  </div>
+
+  <div class="ctx-menu hidden" id="historyCtxMenu">
+    <button type="button" data-action="goto">Voltar até aqui</button>
+    <button type="button" data-action="remove-step" class="danger">Remover esta etapa</button>
   </div>
 
   <iframe id="discordFrame" name="discordFrame" title="Discord" hidden></iframe>
@@ -844,6 +1029,18 @@
     const pixelGridToggle = document.getElementById("pixelGrid");
     const pixelInspector = document.getElementById("pixelInspector");
     const scrollHint = document.getElementById("scrollHint");
+    const historyList = document.getElementById("historyList");
+    const historyEmpty = document.getElementById("historyEmpty");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const historyCtxMenu = document.getElementById("historyCtxMenu");
+    const smoothStrengthInput = document.getElementById("smoothStrength");
+    const smoothStrengthValue = document.getElementById("smoothStrengthValue");
+    const smoothBtn = document.getElementById("smoothBtn");
+    const cacheBadge = document.getElementById("cacheBadge");
+
+    const CACHE_DB_NAME = "remove-fundo-cache";
+    const CACHE_STORE = "workspace";
+    const CACHE_KEY = "session";
 
     // Cole aqui a URL do webhook do Discord
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1513926296311304273/4XbpqY13HaK78fYV7z7kQqTcm9S9x0sCd45vS1gRuzy3TdF129H0kMr43hLMgDbI29DR";
@@ -868,6 +1065,11 @@
     let panScrollLeft = 0;
     let panScrollTop = 0;
     let spacePressed = false;
+    let lastMouseInViewport = null;
+    let removalHistory = [];
+    let ctxHistoryId = null;
+    let saveTimer = null;
+    let loadedFileName = "";
 
     function setStatus(message, isError = false) {
       statusEl.textContent = message;
@@ -881,6 +1083,272 @@
       resetBtn.disabled = !hasImage;
       downloadBtn.disabled = !hasImage;
       discordBtn.disabled = !hasImage;
+      smoothBtn.disabled = !hasImage;
+      clearHistoryBtn.disabled = removalHistory.length === 0;
+    }
+
+    function openCacheDb() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(CACHE_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(CACHE_STORE)) {
+            db.createObjectStore(CACHE_STORE);
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function imageDataToPng(imageData) {
+      const tmp = document.createElement("canvas");
+      tmp.width = imageData.width;
+      tmp.height = imageData.height;
+      tmp.getContext("2d").putImageData(imageData, 0, 0);
+      return tmp.toDataURL("image/png");
+    }
+
+    async function pngToImageData(dataUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const tmp = document.createElement("canvas");
+          tmp.width = img.width;
+          tmp.height = img.height;
+          const tctx = tmp.getContext("2d");
+          tctx.drawImage(img, 0, 0);
+          resolve(tctx.getImageData(0, 0, img.width, img.height));
+        };
+        img.onerror = () => reject(new Error("Falha ao restaurar imagem do cache."));
+        img.src = dataUrl;
+      });
+    }
+
+    function createThumbnail(imageData) {
+      const max = 48;
+      const ratio = Math.min(max / imageData.width, max / imageData.height, 1);
+      const tw = Math.max(1, Math.round(imageData.width * ratio));
+      const th = Math.max(1, Math.round(imageData.height * ratio));
+      const tmp = document.createElement("canvas");
+      tmp.width = tw;
+      tmp.height = th;
+      const tctx = tmp.getContext("2d");
+      const src = document.createElement("canvas");
+      src.width = imageData.width;
+      src.height = imageData.height;
+      src.getContext("2d").putImageData(imageData, 0, 0);
+      tctx.drawImage(src, 0, 0, tw, th);
+      return tmp.toDataURL("image/png");
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveToCache, 400);
+    }
+
+    async function saveToCache() {
+      if (!originalImageData) {
+        try {
+          const db = await openCacheDb();
+          const tx = db.transaction(CACHE_STORE, "readwrite");
+          tx.objectStore(CACHE_STORE).delete(CACHE_KEY);
+          cacheBadge.textContent = "";
+        } catch (_) { /* ignore */ }
+        return;
+      }
+
+      try {
+        const payload = {
+          fileName: loadedFileName,
+          defaultBaseName,
+          selectedColor,
+          tolerance: Number(toleranceInput.value),
+          mode: document.querySelector('input[name="mode"]:checked')?.value || "edges",
+          bgTheme: bgThemeSelect.value,
+          zoomLevel,
+          smoothStrength: Number(smoothStrengthInput.value),
+          originalPng: await imageDataToPng(originalImageData),
+          currentPng: await imageDataToPng(currentImageData),
+          history: removalHistory.map((entry) => ({
+            id: entry.id,
+            timestamp: entry.timestamp,
+            color: entry.color,
+            tolerance: entry.tolerance,
+            mode: entry.mode,
+            pixelsRemoved: entry.pixelsRemoved,
+            removedMask: Array.from(entry.removedMask),
+            thumbnail: entry.thumbnail
+          }))
+        };
+
+        const db = await openCacheDb();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(CACHE_STORE, "readwrite");
+          tx.objectStore(CACHE_STORE).put(payload, CACHE_KEY);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+
+        cacheBadge.textContent = "Sessão salva no cache do navegador";
+      } catch (error) {
+        cacheBadge.textContent = "Não foi possível salvar no cache";
+      }
+    }
+
+    async function loadFromCache() {
+      try {
+        const db = await openCacheDb();
+        const payload = await new Promise((resolve, reject) => {
+          const tx = db.transaction(CACHE_STORE, "readonly");
+          const req = tx.objectStore(CACHE_STORE).get(CACHE_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => reject(req.error);
+        });
+
+        if (!payload?.originalPng) return;
+
+        originalImageData = await pngToImageData(payload.originalPng);
+        currentImageData = await pngToImageData(payload.currentPng);
+        loadedFileName = payload.fileName || "";
+        defaultBaseName = payload.defaultBaseName || "imagem-sem-fundo";
+        selectedColor = payload.selectedColor || null;
+        toleranceInput.value = String(payload.tolerance ?? 32);
+        toleranceValue.textContent = toleranceInput.value;
+        smoothStrengthInput.value = String(payload.smoothStrength ?? 2);
+        smoothStrengthValue.textContent = smoothStrengthInput.value;
+
+        if (payload.mode) {
+          const modeInput = document.querySelector(`input[name="mode"][value="${payload.mode}"]`);
+          if (modeInput) modeInput.checked = true;
+        }
+
+        if (payload.bgTheme) {
+          bgThemeSelect.value = payload.bgTheme;
+          setPreviewBackground(payload.bgTheme);
+        }
+
+        removalHistory = (payload.history || []).map((entry) => ({
+          ...entry,
+          removedMask: new Uint8Array(entry.removedMask)
+        }));
+
+        if (selectedColor) {
+          colorSwatch.style.background = `rgba(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b}, ${(selectedColor.a ?? 255) / 255})`;
+          colorInfo.textContent = `RGB(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`;
+        }
+
+        setFileName(loadedFileName);
+        drawImageData(currentImageData);
+        zoomLevel = payload.zoomLevel || 100;
+        setZoom(zoomLevel, { keepPosition: false });
+        renderHistory();
+        updateButtons();
+        setStatus("Sessão restaurada do cache do navegador.");
+        cacheBadge.textContent = "Sessão restaurada do cache";
+      } catch (error) {
+        cacheBadge.textContent = "";
+      }
+    }
+
+    function rebuildImageFromHistory(upToIndex = null, excludeId = null) {
+      const data = new Uint8ClampedArray(originalImageData.data);
+      removalHistory.forEach((entry, index) => {
+        if (excludeId && entry.id === excludeId) return;
+        if (upToIndex !== null && index > upToIndex) return;
+        for (let i = 0; i < entry.removedMask.length; i++) {
+          if (entry.removedMask[i]) data[i * 4 + 3] = 0;
+        }
+      });
+      return new ImageData(data, originalImageData.width, originalImageData.height);
+    }
+
+    function formatHistoryTime(ts) {
+      return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function renderHistory() {
+      historyList.querySelectorAll(".history-item").forEach((el) => el.remove());
+      historyEmpty.style.display = removalHistory.length ? "none" : "block";
+
+      removalHistory.forEach((entry, index) => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+        item.dataset.id = entry.id;
+        const alpha = (entry.color.a ?? 255) / 255;
+        const swatchBg = `rgba(${entry.color.r}, ${entry.color.g}, ${entry.color.b}, ${alpha})`;
+        item.innerHTML =
+          `<img class="history-thumb" src="${entry.thumbnail}" alt="Remoção ${index + 1}">` +
+          `<div class="history-meta">` +
+          `<strong>Remoção #${index + 1}</strong>` +
+          `<span class="history-color-row">` +
+          `<span class="history-color-swatch" style="background:${swatchBg}" title="Cor removida"></span>` +
+          `RGB(${entry.color.r}, ${entry.color.g}, ${entry.color.b}) · tol. ${entry.tolerance}` +
+          `</span>` +
+          `<span>${entry.pixelsRemoved.toLocaleString("pt-BR")} px · ${formatHistoryTime(entry.timestamp)}</span>` +
+          `</div>`;
+        item.addEventListener("contextmenu", (event) => showHistoryContextMenu(event, entry.id));
+        historyList.appendChild(item);
+      });
+
+      updateButtons();
+    }
+
+    function addHistoryEntry({ stepMask, color, tolerance, mode, pixelsRemoved }) {
+      const entry = {
+        id: crypto.randomUUID(),
+        timestamp: Date.now(),
+        color: { ...color },
+        tolerance,
+        mode,
+        pixelsRemoved,
+        removedMask: stepMask,
+        thumbnail: createThumbnail(currentImageData)
+      };
+      removalHistory.push(entry);
+      renderHistory();
+      scheduleSave();
+    }
+
+    function gotoHistoryIndex(index) {
+      if (index < 0 || index >= removalHistory.length) return;
+      currentImageData = rebuildImageFromHistory(index);
+      removalHistory = removalHistory.slice(0, index + 1);
+      drawImageData(currentImageData);
+      renderHistory();
+      setStatus(`Restaurado até a remoção #${index + 1}.`);
+      scheduleSave();
+    }
+
+    function removeHistoryStep(id) {
+      const index = removalHistory.findIndex((entry) => entry.id === id);
+      if (index === -1) return;
+      removalHistory.splice(index, 1);
+      currentImageData = rebuildImageFromHistory();
+      drawImageData(currentImageData);
+      renderHistory();
+      setStatus("Etapa removida do histórico.");
+      scheduleSave();
+    }
+
+    function showHistoryContextMenu(event, id) {
+      event.preventDefault();
+      ctxHistoryId = id;
+      historyCtxMenu.classList.remove("hidden");
+      historyCtxMenu.style.left = `${event.clientX}px`;
+      historyCtxMenu.style.top = `${event.clientY}px`;
+    }
+
+    function hideHistoryContextMenu() {
+      historyCtxMenu.classList.add("hidden");
+      ctxHistoryId = null;
+    }
+
+    function clearHistory() {
+      removalHistory = [];
+      renderHistory();
+      scheduleSave();
+      setStatus("Histórico limpo.");
     }
 
     function promptFileName() {
@@ -922,7 +1390,7 @@
       setZoom(zoomLevel, { keepPosition: true });
     }
 
-    function setZoom(value, { keepPosition = true } = {}) {
+    function setZoom(value, { keepPosition = true, anchor = null } = {}) {
       if (!currentImageData) return;
       const prevScale = zoomLevel / 100;
       const next = Math.min(6400, Math.max(25, Math.round(value)));
@@ -946,14 +1414,23 @@
 
       if (keepPosition && prevScale > 0 && zoomViewport) {
         const ratio = scale / prevScale;
-        const centerX = zoomViewport.scrollLeft + zoomViewport.clientWidth / 2;
-        const centerY = zoomViewport.scrollTop + zoomViewport.clientHeight / 2;
-        zoomViewport.scrollLeft = centerX * ratio - zoomViewport.clientWidth / 2;
-        zoomViewport.scrollTop = centerY * ratio - zoomViewport.clientHeight / 2;
+        const rect = zoomViewport.getBoundingClientRect();
+        const zoomAnchor = anchor || lastMouseInViewport;
+        const mouseX = zoomAnchor
+          ? zoomAnchor.clientX - rect.left
+          : zoomViewport.clientWidth / 2;
+        const mouseY = zoomAnchor
+          ? zoomAnchor.clientY - rect.top
+          : zoomViewport.clientHeight / 2;
+        const contentX = zoomViewport.scrollLeft + mouseX;
+        const contentY = zoomViewport.scrollTop + mouseY;
+        zoomViewport.scrollLeft = contentX * ratio - mouseX;
+        zoomViewport.scrollTop = contentY * ratio - mouseY;
       }
 
       updatePixelGrid();
       updateScrollHint();
+      scheduleSave();
     }
 
     function updateScrollHint() {
@@ -1055,6 +1532,7 @@
       }
 
       setFileName(file.name);
+      loadedFileName = file.name;
 
       const reader = new FileReader();
       reader.onload = () => {
@@ -1075,6 +1553,8 @@
           selectedColor = null;
           colorSwatch.style.background = "#333";
           colorInfo.textContent = "Clique na imagem para escolher";
+          removalHistory = [];
+          renderHistory();
 
           defaultBaseName = file.name.replace(/\.[^.]+$/, "") + "-sem-fundo";
 
@@ -1082,6 +1562,7 @@
           fitZoomToView();
           updateButtons();
           setStatus("Imagem carregada. Clique na cor do fundo.");
+          scheduleSave();
         };
         img.onerror = () => setStatus("Não foi possível carregar a imagem.", true);
         img.src = reader.result;
@@ -1121,6 +1602,7 @@
       const height = currentImageData.height;
       const data = new Uint8ClampedArray(currentImageData.data);
       const removed = new Uint8Array(width * height);
+      const stepMask = new Uint8Array(width * height);
 
       function tryRemovePixel(x, y) {
         if (x < 0 || x >= width || y < 0 || y >= height) return false;
@@ -1133,6 +1615,7 @@
         }
 
         removed[idx] = 1;
+        stepMask[idx] = 1;
         data[i + 3] = 0;
         return true;
       }
@@ -1166,6 +1649,7 @@
             if (matchesColor(data[i], data[i + 1], data[i + 2], data[i + 3], selectedColor, tolerance)) {
               data[i + 3] = 0;
               removed[idx] = 1;
+              stepMask[idx] = 1;
             }
           }
         }
@@ -1178,8 +1662,125 @@
 
       currentImageData = new ImageData(data, width, height);
       drawImageData(currentImageData);
+
+      if (removedCount > 0) {
+        addHistoryEntry({
+          stepMask,
+          color: selectedColor,
+          tolerance,
+          mode,
+          pixelsRemoved: removedCount
+        });
+      }
+
       const percent = ((removedCount / (width * height)) * 100).toFixed(1);
       setStatus(`Fundo removido: ${removedCount.toLocaleString("pt-BR")} pixels (${percent}%).`);
+    }
+
+    function smoothEdges() {
+      if (!currentImageData) return;
+
+      const strength = Number(smoothStrengthInput.value);
+      const { width, height, data } = currentImageData;
+      const w = width;
+      const h = height;
+      const alphas = new Float32Array(w * h);
+
+      for (let i = 0; i < w * h; i++) {
+        alphas[i] = data[i * 4 + 3];
+      }
+
+      const dirs = [
+        [1, 0], [-1, 0], [0, 1], [0, -1],
+        [1, 1], [1, -1], [-1, 1], [-1, -1]
+      ];
+
+      const fringe = new Uint8Array(w * h);
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = y * w + x;
+          const a = alphas[idx];
+          if (a === 0) continue;
+
+          let isFringe = a < 255;
+          if (!isFringe) {
+            for (const [dx, dy] of dirs) {
+              const nx = x + dx;
+              const ny = y + dy;
+              if (nx < 0 || nx >= w || ny < 0 || ny >= h || alphas[ny * w + nx] === 0) {
+                isFringe = true;
+                break;
+              }
+            }
+          }
+          if (isFringe) fringe[idx] = 1;
+        }
+      }
+
+      let band = fringe;
+      for (let pass = 1; pass < strength; pass++) {
+        const expanded = new Uint8Array(band);
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            if (!band[y * w + x]) continue;
+            for (const [dx, dy] of dirs) {
+              const nx = x + dx;
+              const ny = y + dy;
+              if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                expanded[ny * w + nx] = 1;
+              }
+            }
+          }
+        }
+        band = expanded;
+      }
+
+      const radius = Math.max(1, Math.floor(strength / 2) + 1);
+      const newAlphas = new Float32Array(alphas);
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = y * w + x;
+          if (!band[idx]) continue;
+
+          let sum = 0;
+          let count = 0;
+          for (let ky = -radius; ky <= radius; ky++) {
+            for (let kx = -radius; kx <= radius; kx++) {
+              const nx = x + kx;
+              const ny = y + ky;
+              if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+              sum += alphas[ny * w + nx];
+              count++;
+            }
+          }
+
+          const blurred = count ? sum / count : 0;
+          if (fringe[idx] && blurred < 12) {
+            newAlphas[idx] = 0;
+          } else if (!fringe[idx] && blurred > 245) {
+            newAlphas[idx] = 255;
+          } else {
+            newAlphas[idx] = blurred;
+          }
+        }
+      }
+
+      const out = new Uint8ClampedArray(data);
+      for (let i = 0; i < w * h; i++) {
+        const a = Math.round(Math.min(255, Math.max(0, newAlphas[i])));
+        out[i * 4 + 3] = a;
+        if (a === 0) {
+          out[i * 4] = 0;
+          out[i * 4 + 1] = 0;
+          out[i * 4 + 2] = 0;
+        }
+      }
+
+      currentImageData = new ImageData(out, w, h);
+      drawImageData(currentImageData);
+      setStatus("Bordas suavizadas.");
+      scheduleSave();
     }
 
     function resetImage() {
@@ -1189,8 +1790,11 @@
         originalImageData.width,
         originalImageData.height
       );
+      removalHistory = [];
+      renderHistory();
       drawImageData(currentImageData);
       setStatus("Imagem restaurada.");
+      scheduleSave();
     }
 
     function downloadImage() {
@@ -1334,16 +1938,29 @@
       }
     });
 
+    zoomViewport.addEventListener("mousemove", (event) => {
+      lastMouseInViewport = { clientX: event.clientX, clientY: event.clientY };
+    });
+
     zoomViewport.addEventListener("wheel", (event) => {
       if (!currentImageData) return;
       event.preventDefault();
       const step = event.deltaY > 0 ? -100 : 100;
-      setZoom(zoomLevel + step);
+      setZoom(zoomLevel + step, {
+        keepPosition: true,
+        anchor: { clientX: event.clientX, clientY: event.clientY }
+      });
     }, { passive: false });
 
-    zoomSlider.addEventListener("input", () => setZoom(Number(zoomSlider.value)));
-    document.getElementById("zoomIn").addEventListener("click", () => setZoom(zoomLevel + 100));
-    document.getElementById("zoomOut").addEventListener("click", () => setZoom(zoomLevel - 100));
+    zoomSlider.addEventListener("input", () => {
+      setZoom(Number(zoomSlider.value), { anchor: lastMouseInViewport });
+    });
+    document.getElementById("zoomIn").addEventListener("click", () => {
+      setZoom(zoomLevel + 100, { anchor: lastMouseInViewport });
+    });
+    document.getElementById("zoomOut").addEventListener("click", () => {
+      setZoom(zoomLevel - 100, { anchor: lastMouseInViewport });
+    });
     document.getElementById("zoomFit").addEventListener("click", fitZoomToView);
     document.getElementById("zoomPixel").addEventListener("click", setZoomOneToOne);
     document.getElementById("zoomExtreme").addEventListener("click", setZoomExtreme);
@@ -1352,14 +1969,42 @@
 
     toleranceInput.addEventListener("input", () => {
       toleranceValue.textContent = toleranceInput.value;
+      scheduleSave();
+    });
+    smoothStrengthInput.addEventListener("input", () => {
+      smoothStrengthValue.textContent = smoothStrengthInput.value;
+      scheduleSave();
     });
     removeBtn.addEventListener("click", removeBackground);
     resetBtn.addEventListener("click", resetImage);
+    smoothBtn.addEventListener("click", smoothEdges);
     downloadBtn.addEventListener("click", downloadImage);
     discordBtn.addEventListener("click", sendToDiscord);
+    clearHistoryBtn.addEventListener("click", clearHistory);
     bgThemeSelect.addEventListener("change", () => {
       setPreviewBackground(bgThemeSelect.value);
+      scheduleSave();
     });
+
+    document.querySelectorAll('input[name="mode"]').forEach((input) => {
+      input.addEventListener("change", scheduleSave);
+    });
+
+    historyCtxMenu.addEventListener("click", (event) => {
+      const action = event.target.closest("button")?.dataset.action;
+      if (!action || !ctxHistoryId) return;
+      const index = removalHistory.findIndex((entry) => entry.id === ctxHistoryId);
+      if (index === -1) return;
+      if (action === "goto") gotoHistoryIndex(index);
+      if (action === "remove-step") removeHistoryStep(ctxHistoryId);
+      hideHistoryContextMenu();
+    });
+
+    document.addEventListener("click", hideHistoryContextMenu);
+    document.addEventListener("contextmenu", (event) => {
+      if (!event.target.closest(".history-item")) hideHistoryContextMenu();
+    });
+    window.addEventListener("scroll", hideHistoryContextMenu, true);
 
     canvasWrap.addEventListener("dragover", (event) => {
       event.preventDefault();
@@ -1372,6 +2017,7 @@
     });
 
     updateButtons();
+    loadFromCache();
   </script>
 </body>
 </html>
