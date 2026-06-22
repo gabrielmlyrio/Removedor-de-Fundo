@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: one-for-all
+    runtime: python
+    plan: free
+    buildCommand: pip install -r onemus-server/requirements.txt
+    startCommand: python onemus-server/server.py
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHON_VERSION
+        value: "3.12.0"

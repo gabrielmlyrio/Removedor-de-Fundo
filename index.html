@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="onefor-api" content="">
   <title>One For All</title>
   <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-one-16.png" id="appFavicon16">
   <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-one-32.png" id="appFavicon32">
@@ -308,6 +309,19 @@
     .mode-btn:focus-visible {
       outline: 2px solid rgba(255, 255, 255, 0.2);
       outline-offset: 1px;
+    }
+
+    .mode-btn:disabled,
+    .mode-btn.is-disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .mode-btn:disabled:hover,
+    .mode-btn.is-disabled:hover {
+      color: var(--muted);
+      background: transparent;
     }
 
     .mode-btn .mode-one,
@@ -1087,6 +1101,15 @@
 
     .onemus-status.ok { color: #a5d6a7; }
     .onemus-status.error { color: var(--danger); }
+
+    .onemus-server-hint {
+      font-size: 0.82rem;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .onemus-server-hint.ok { color: #a5d6a7; }
+    .onemus-server-hint.warn { color: #ffb74d; }
 
     .onemus-preview-top h2 {
       margin-bottom: 0;
@@ -3382,6 +3405,164 @@
       }
     }
 
+    .terms-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 12000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .terms-overlay.hidden {
+      display: none;
+    }
+
+    .terms-card {
+      width: min(640px, 100%);
+      max-height: min(88vh, 760px);
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(160deg, #141414 0%, #101810 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+
+    .terms-card-header {
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terms-card-header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      color: var(--gold-light);
+    }
+
+    .terms-card-header p {
+      margin: 8px 0 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .terms-body {
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 16px 20px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #ddd;
+    }
+
+    .terms-body ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .terms-body li {
+      margin-bottom: 8px;
+    }
+
+    .terms-body strong {
+      color: #f0f0f0;
+    }
+
+    .terms-footnote {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .terms-footnote a {
+      color: var(--gold-light);
+    }
+
+    .terms-actions {
+      padding: 14px 20px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .terms-accept-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .terms-accept-label input {
+      margin-top: 3px;
+      flex-shrink: 0;
+      accent-color: var(--gold);
+    }
+
+    .terms-actions-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .terms-help-btn {
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .app-footer {
+      position: fixed;
+      right: 14px;
+      bottom: 10px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.28);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .app-footer a,
+    .app-footer button {
+      pointer-events: auto;
+      color: rgba(255, 255, 255, 0.42);
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .app-footer a:hover,
+    .app-footer button:hover {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .app-footer strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .onemus-legal-note {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
     .powered-by-lyrio {
       position: fixed;
       right: 14px;
@@ -3439,10 +3620,11 @@
         <button type="button" class="mode-btn" id="modeMovAtomBtn" data-mode="movatom" role="tab" aria-selected="false">
           <span class="mode-one">One</span><span class="mode-mov">Mov</span>
         </button>
-        <button type="button" class="mode-btn" id="modeOneMusBtn" data-mode="onemus" role="tab" aria-selected="false">
+        <button type="button" class="mode-btn is-disabled" id="modeOneMusBtn" data-mode="onemus" role="tab" aria-selected="false" disabled aria-disabled="true" title="OneMus em breve">
           <span class="mode-one">One</span><span class="mode-mus">Mus</span>
         </button>
       </div>
+      <button type="button" class="btn-secondary tutorial-help-btn terms-help-btn" id="termsOpenBtn" title="Termos de uso">Termos</button>
       <button type="button" class="btn-secondary tutorial-help-btn" id="tutorialHelpBtn" title="Ver tutorial">Tutorial</button>
     </header>
 
@@ -3976,7 +4158,9 @@
         <div class="control">
           <label for="onemusUrlInput">Link do YouTube</label>
           <textarea id="onemusUrlInput" placeholder="Cole um ou mais links do YouTube (um por linha)…" spellcheck="false"></textarea>
-          <p class="settings-hint" style="margin-top:8px">Cole os links — as músicas carregam à direita com barra de progresso. Renomeie em lote antes de baixar.</p>
+          <p class="settings-hint" style="margin-top:8px">Cole links de vídeo ou playlist do YouTube (um por linha). Renomeie em lote antes de baixar.</p>
+          <p class="onemus-server-hint warn" id="onemusServerHint">Conectando ao OneMus…</p>
+          <p class="onemus-legal-note">Ao baixar, você confirma uso lícito do conteúdo. Arquivos vão para a pasta local que você escolher — sem vínculo com o criador desta ferramenta.</p>
         </div>
 
         <div class="control">
@@ -4288,6 +4472,35 @@
 
   <div id="globalTooltip" class="global-tooltip hidden" role="tooltip"></div>
 
+  <div id="termsOverlay" class="terms-overlay hidden" aria-hidden="true">
+    <div class="terms-card" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+      <div class="terms-card-header">
+        <h2 id="termsTitle">Termos de uso — One For All</h2>
+        <p>Ferramenta gratuita para entretenimento. Leia antes de continuar.</p>
+      </div>
+      <div class="terms-body">
+        <ul>
+          <li>O <strong>One For All</strong> é oferecido gratuitamente, para entretenimento e uso pessoal, “como está”, sem garantias.</li>
+          <li><strong>Seus arquivos e criações</strong> (imagens, vídeos, áudios editados ou baixados) <strong>não têm vínculo</strong> com o criador deste sistema. Nada do que você produzir pertence ou é reivindicado por nós.</li>
+          <li>O processamento ocorre <strong>no seu dispositivo</strong>; os arquivos finais são salvos <strong>localmente</strong> nas pastas e downloads que <strong>você</strong> escolher.</li>
+          <li><strong>Você é o único responsável</strong> por suas ações, pelo conteúdo que carrega ou obtém e pelo cumprimento de leis de direitos autorais e termos de plataformas de terceiros (ex.: YouTube).</li>
+          <li>Não utilize esta ferramenta para pirataria, distribuição não autorizada ou qualquer fim ilícito.</li>
+          <li>O criador <strong>não monitora</strong> seu uso e <strong>não se responsabiliza</strong> por danos, perdas ou consequências legais decorrentes do uso da ferramenta.</li>
+        </ul>
+        <p class="terms-footnote">Texto completo: <a href="TERMS.md" target="_blank" rel="noopener noreferrer">TERMS.md</a>. Este aviso não substitui orientação jurídica profissional.</p>
+      </div>
+      <div class="terms-actions">
+        <label class="terms-accept-label">
+          <input type="checkbox" id="termsAcceptCheck">
+          <span>Li e compreendo os termos. Tenho ciência de que sou responsável por tudo o que faço com esta ferramenta e que meus arquivos ficam apenas na minha máquina, sem vínculo com o criador.</span>
+        </label>
+        <div class="terms-actions-row">
+          <button type="button" class="btn-primary" id="termsAcceptBtn" disabled>Aceitar e continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="tutorialOverlay" class="tutorial-overlay hidden" aria-hidden="true">
     <div id="tutorialSpotlight" class="tutorial-spotlight hidden" aria-hidden="true"></div>
     <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
@@ -4320,6 +4533,14 @@
       </div>
     </div>
   </div>
+
+  <footer class="app-footer">
+    <button type="button" id="termsFooterBtn">Termos</button>
+    <span aria-hidden="true">·</span>
+    <a href="TERMS.md" target="_blank" rel="noopener noreferrer">TERMS.md</a>
+    <span aria-hidden="true">·</span>
+    <span>Powered By <strong>Lyrio</strong></span>
+  </footer>
 
   <iframe id="discordFrame" name="discordFrame" title="Discord" hidden></iframe>
 
@@ -8612,6 +8833,8 @@
     const brandPrefixMus = document.getElementById("brandPrefixMus");
     const brandSubtitle = document.getElementById("brandSubtitle");
 
+    const ONEMUS_ENABLED = false;
+
     const MODE_BUTTONS = {
       picatom: modePicAtomBtn,
       desatom: modeDesAtomBtn,
@@ -8684,6 +8907,7 @@
     }
 
     function setAppMode(mode) {
+      if (mode === "onemus" && !ONEMUS_ENABLED) return;
       if (!MODE_COPY[mode]) mode = "picatom";
 
       Object.entries(MODE_BUTTONS).forEach(([key, btn]) => {
@@ -8741,6 +8965,9 @@
           syncOverlayCanvas();
         });
       }
+      if (mode === "onemus") {
+        ensureOnemusApiReady(true);
+      }
     }
 
     modePicAtomBtn.addEventListener("click", () => setAppMode("picatom"));
@@ -8748,7 +8975,10 @@
     modeRedAtomBtn.addEventListener("click", () => setAppMode("redatom"));
     modeTonAtomBtn.addEventListener("click", () => setAppMode("tonatom"));
     modeMovAtomBtn.addEventListener("click", () => setAppMode("movatom"));
-    modeOneMusBtn.addEventListener("click", () => setAppMode("onemus"));
+    modeOneMusBtn.addEventListener("click", () => {
+      if (!ONEMUS_ENABLED) return;
+      setAppMode("onemus");
+    });
     window.addEventListener("resize", () => {
       updateModeIndicator(currentAppMode);
     });
@@ -10303,8 +10533,10 @@
     const onemusSuffixText = document.getElementById("onemusSuffixText");
     const onemusReplaceBtn = document.getElementById("onemusReplaceBtn");
     const onemusAffixBtn = document.getElementById("onemusAffixBtn");
+    const onemusServerHint = document.getElementById("onemusServerHint");
 
     const ONEMUS_FETCH_TIMEOUT_MS = 12000;
+    const ONEMUS_RESOLVE_TIMEOUT_MS = 180000;
 
     const ONEMUS_PIPED_INSTANCES = [
       "https://pipedapi.kavin.rocks",
@@ -10326,6 +10558,25 @@
     let onemusBusy = false;
     let onemusInputTimer = null;
     let onemusLoadToken = 0;
+    let onemusApiBase = "";
+    let onemusApiReady = false;
+    let onemusApiCache = { at: 0, checked: false };
+    let onemusApiBasePromise = null;
+
+    function getOnemusApiCandidates() {
+      const meta = document.querySelector('meta[name="onefor-api"]')?.content?.trim();
+      const candidates = [];
+      if (location.protocol !== "file:") {
+        candidates.push(location.origin);
+      }
+      if (meta) candidates.push(meta);
+      return [...new Set(candidates.map((base) => String(base).replace(/\/$/, "")).filter(Boolean))];
+    }
+
+    function onemusApiUrl(path) {
+      if (!onemusApiBase) throw new Error("OneMus offline.");
+      return `${onemusApiBase}${path.startsWith("/") ? path : `/${path}`}`;
+    }
 
     function setOnemusStatus(message, type = "") {
       onemusStatus.textContent = message || "";
@@ -10355,18 +10606,108 @@
       return null;
     }
 
+    function parseOnemusInputLines(text) {
+      const seen = new Set();
+      const lines = [];
+      for (const line of String(text || "").split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed || seen.has(trimmed)) continue;
+        seen.add(trimmed);
+        lines.push(trimmed);
+      }
+      return lines;
+    }
+
     function parseOnemusUrls(text) {
       const seen = new Set();
       const urls = [];
-      for (const line of String(text || "").split(/\r?\n/)) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-        const videoId = extractYouTubeVideoId(trimmed);
+      for (const line of parseOnemusInputLines(text)) {
+        const videoId = extractYouTubeVideoId(line);
         if (!videoId || seen.has(videoId)) continue;
         seen.add(videoId);
-        urls.push({ url: trimmed, videoId });
+        urls.push({ url: line, videoId });
       }
       return urls;
+    }
+
+    function updateOnemusServerHint() {
+      if (!onemusServerHint) return;
+      if (onemusApiReady) {
+        onemusServerHint.textContent = "OneMus online — vídeos, playlists e mix do YouTube.";
+        onemusServerHint.className = "onemus-server-hint ok";
+        return;
+      }
+      if (location.protocol === "file:") {
+        onemusServerHint.textContent =
+          "Abra o One For All online (Render ou hospedagem), não como ficheiro local.";
+      } else {
+        onemusServerHint.textContent =
+          "OneMus offline neste endereço. Publique o app com render.yaml (Render) ou use o link oficial.";
+      }
+      onemusServerHint.className = "onemus-server-hint warn";
+    }
+
+    async function ensureOnemusApiReady(force = false) {
+      const now = Date.now();
+      if (!force && onemusApiCache.checked && now - onemusApiCache.at < 8000) {
+        updateOnemusServerHint();
+        return onemusApiReady;
+      }
+      if (!force && onemusApiBasePromise) {
+        return onemusApiBasePromise;
+      }
+
+      onemusApiBasePromise = (async () => {
+        const candidates = getOnemusApiCandidates();
+        for (const base of candidates) {
+          try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 4000);
+            const res = await fetch(`${base}/health`, { signal: ctrl.signal });
+            clearTimeout(timer);
+            if (!res.ok) continue;
+            const data = await res.json().catch(() => ({}));
+            if (data?.ok) {
+              onemusApiBase = base;
+              onemusApiReady = true;
+              onemusApiCache = { at: Date.now(), checked: true };
+              updateOnemusServerHint();
+              return true;
+            }
+          } catch {
+            /* tenta próximo */
+          }
+        }
+        onemusApiBase = "";
+        onemusApiReady = false;
+        onemusApiCache = { at: Date.now(), checked: true };
+        updateOnemusServerHint();
+        return false;
+      })();
+
+      const ok = await onemusApiBasePromise;
+      onemusApiBasePromise = null;
+      return ok;
+    }
+
+    async function resolveOnemusOnlineUrl(url) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ONEMUS_RESOLVE_TIMEOUT_MS);
+      try {
+        const res = await fetch(onemusApiUrl("/api/resolve"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ url }),
+          signal: ctrl.signal,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || `Servidor respondeu ${res.status}`);
+        }
+        return data;
+      } finally {
+        clearTimeout(timer);
+      }
     }
 
     function sanitizeOnemusFileName(name) {
@@ -10409,9 +10750,12 @@
       const msg = String(err?.message || err || "").trim();
       if (!msg || msg === "Failed to fetch") {
         if (location.protocol === "file:") {
-          return "Abra o app via HTTPS (GitHub Pages ou localhost), não como ficheiro local.";
+          return "Abra o One For All online (Render), não como ficheiro local.";
         }
-        return "Falha de rede ou bloqueio CORS. Tente outra instância ou mais tarde.";
+        return "OneMus offline. Publique o app no Render ou use o link oficial.";
+      }
+      if (/^Servidor respondeu (403|500|502|503)/.test(msg)) {
+        return "OneMus indisponível no momento. Tente de novo em instantes.";
       }
       return msg;
     }
@@ -10530,6 +10874,10 @@
       const meta = track.meta;
       const id = meta?.videoId || track.videoId;
 
+      if (meta?.source === "online" && id) {
+        urls.push(onemusApiUrl(`/api/audio/${encodeURIComponent(id)}`));
+      }
+
       if (meta?.source === "piped" && audio?.url) {
         urls.push(audio.url);
       }
@@ -10557,6 +10905,9 @@
     }
 
     async function refreshOnemusTrackMetaForDownload(track) {
+      if (track.meta?.source === "online") {
+        return track.meta;
+      }
       const preferredBase = track.meta?.sourceBase;
       let meta = await fetchOnemusStreamMeta(track.videoId);
       if (preferredBase && meta?.source === "invidious" && meta.sourceBase !== preferredBase) {
@@ -10803,60 +11154,78 @@
     }
 
     async function loadOnemusTracksFromInput() {
-      const entries = parseOnemusUrls(onemusUrlInput.value);
+      const inputLines = parseOnemusInputLines(onemusUrlInput.value);
       const loadToken = ++onemusLoadToken;
       const oldByVideo = new Map(onemusTracks.map((t) => [t.videoId, t]));
 
-      if (!entries.length) {
+      if (!inputLines.length) {
         onemusTracks = [];
         renderOnemusTrackList();
         return;
       }
 
-      const next = entries.map((entry) => {
-        const prev = oldByVideo.get(entry.videoId);
-        if (prev && prev.meta && prev.status !== "loading") {
-          return { ...prev, url: entry.url };
-        }
-        if (prev && prev.status === "loading") {
-          return { ...prev, url: entry.url };
-        }
-        return {
-          id: `tr-${entry.videoId}-${Math.random().toString(36).slice(2, 8)}`,
-          url: entry.url,
-          videoId: entry.videoId,
-          originalTitle: "",
-          displayName: prev?.displayName || "",
-          status: "loading",
-          progress: 0,
-          meta: null,
-          error: "",
-          fileName: "",
-        };
-      });
+      const apiOk = await ensureOnemusApiReady();
+      if (apiOk) {
+        setOnemusStatus("Carregando links do YouTube…");
+        const resolved = [];
+        const seenIds = new Set();
+        let failLines = 0;
 
-      onemusTracks = next;
-      renderOnemusTrackList();
-
-      const toLoad = onemusTracks.filter((t) => t.status === "loading");
-      await Promise.all(
-        toLoad.map(async (track) => {
-          await loadOnemusTrackMeta(track);
+        for (const line of inputLines) {
+          try {
+            setOnemusStatus(`Analisando link… (${resolved.length} faixa(s) até agora)`);
+            const data = await resolveOnemusOnlineUrl(line);
+            for (const item of data.tracks || []) {
+              if (!item?.videoId || seenIds.has(item.videoId)) continue;
+              seenIds.add(item.videoId);
+              const prev = oldByVideo.get(item.videoId);
+              const audioPath = `/api/audio/${encodeURIComponent(item.videoId)}`;
+              resolved.push({
+                id: prev?.id || `tr-${item.videoId}-${Math.random().toString(36).slice(2, 8)}`,
+                url: item.url || line,
+                videoId: item.videoId,
+                originalTitle: item.title || `Vídeo ${item.videoId}`,
+                displayName: prev?.displayName || item.title || `Vídeo ${item.videoId}`,
+                status: "ready",
+                progress: 0,
+                meta: {
+                  title: item.title || `Vídeo ${item.videoId}`,
+                  source: "online",
+                  videoId: item.videoId,
+                  audioStreams: [{ url: onemusApiUrl(audioPath), format: "bestaudio" }],
+                },
+                error: "",
+                fileName: "",
+              });
+            }
+          } catch {
+            failLines += 1;
+          }
           if (loadToken !== onemusLoadToken) return;
-        }),
-      );
-
-      if (loadToken === onemusLoadToken) {
-        const ok = onemusTracks.filter((t) => t.status === "ready").length;
-        const fail = onemusTracks.filter((t) => t.status === "error").length;
-        if (ok && fail) {
-          setOnemusStatus(`${ok} carregada(s), ${fail} com erro.`, "error");
-        } else if (fail && !ok) {
-          setOnemusStatus("Não foi possível carregar os links.", "error");
-        } else if (ok) {
-          setOnemusStatus(`${ok} música(s) carregada(s).`, "ok");
         }
+
+        onemusTracks = resolved;
+        renderOnemusTrackList();
+
+        if (loadToken === onemusLoadToken) {
+          const ok = resolved.length;
+          if (ok && failLines) {
+            setOnemusStatus(`${ok} faixa(s) carregada(s), ${failLines} link(s) com erro.`, "error");
+          } else if (!ok) {
+            setOnemusStatus("Não foi possível carregar os links.", "error");
+          } else {
+            setOnemusStatus(`${ok} música(s) carregada(s).`, "ok");
+          }
+        }
+        return;
       }
+
+      onemusTracks = [];
+      renderOnemusTrackList();
+      setOnemusStatus(
+        "OneMus offline neste endereço. Publique o app no Render (render.yaml) ou abra o link oficial.",
+        "error",
+      );
     }
 
     function scheduleOnemusInputLoad() {
@@ -10911,7 +11280,10 @@
       }
 
       const meta = await refreshOnemusTrackMetaForDownload(track);
-      const audio = pickOnemusBestAudio(meta.audioStreams);
+      const audio =
+        meta?.source === "online"
+          ? meta.audioStreams?.[0] || { url: onemusApiUrl(`/api/audio/${track.videoId}`) }
+          : pickOnemusBestAudio(meta.audioStreams);
       if (!audio?.url && !audio?.itag) throw new Error("URL de áudio indisponível.");
 
       track.status = "downloading";
@@ -11015,8 +11387,79 @@
     });
 
     renderOnemusTrackList();
+    if (ONEMUS_ENABLED) ensureOnemusApiReady(true);
 
     const TUTORIAL_STORAGE_KEY = "picatom-tutorial-v5";
+    const TERMS_STORAGE_KEY = "onefor-terms-v1";
+
+    const termsOverlay = document.getElementById("termsOverlay");
+    const termsAcceptCheck = document.getElementById("termsAcceptCheck");
+    const termsAcceptBtn = document.getElementById("termsAcceptBtn");
+    const termsOpenBtn = document.getElementById("termsOpenBtn");
+    const termsFooterBtn = document.getElementById("termsFooterBtn");
+
+    function isTermsAccepted() {
+      try {
+        return localStorage.getItem(TERMS_STORAGE_KEY) === "1";
+      } catch {
+        return false;
+      }
+    }
+
+    function setTermsAccepted() {
+      try {
+        localStorage.setItem(TERMS_STORAGE_KEY, "1");
+      } catch {
+        /* ignora */
+      }
+    }
+
+    function openTermsOverlay(requireAccept = false) {
+      if (!termsOverlay) return;
+      termsOverlay.classList.remove("hidden");
+      termsOverlay.setAttribute("aria-hidden", "false");
+      if (termsAcceptCheck) {
+        termsAcceptCheck.checked = requireAccept ? false : isTermsAccepted();
+      }
+      if (termsAcceptBtn) {
+        termsAcceptBtn.disabled = requireAccept ? !termsAcceptCheck?.checked : false;
+        termsAcceptBtn.textContent = requireAccept ? "Aceitar e continuar" : "Fechar";
+      }
+      termsOverlay.dataset.requireAccept = requireAccept ? "1" : "0";
+    }
+
+    function closeTermsOverlay() {
+      if (!termsOverlay) return;
+      termsOverlay.classList.add("hidden");
+      termsOverlay.setAttribute("aria-hidden", "true");
+    }
+
+    function maybeShowTermsGate() {
+      if (isTermsAccepted()) return false;
+      openTermsOverlay(true);
+      return true;
+    }
+
+    termsAcceptCheck?.addEventListener("change", () => {
+      if (termsOverlay?.dataset.requireAccept !== "1") return;
+      if (termsAcceptBtn) termsAcceptBtn.disabled = !termsAcceptCheck.checked;
+    });
+
+    termsAcceptBtn?.addEventListener("click", () => {
+      const requireAccept = termsOverlay?.dataset.requireAccept === "1";
+      if (requireAccept) {
+        if (!termsAcceptCheck?.checked) return;
+        setTermsAccepted();
+        closeTermsOverlay();
+        maybeStartTutorial();
+        return;
+      }
+      closeTermsOverlay();
+    });
+
+    termsOpenBtn?.addEventListener("click", () => openTermsOverlay(false));
+    termsFooterBtn?.addEventListener("click", () => openTermsOverlay(false));
+
     const tutorialOverlay = document.getElementById("tutorialOverlay");
     const tutorialSpotlight = document.getElementById("tutorialSpotlight");
     const tutorialSectionBadge = document.getElementById("tutorialSectionBadge");
@@ -11329,6 +11772,10 @@
       },
     ];
 
+    const TUTORIAL_STEPS_ACTIVE = ONEMUS_ENABLED
+      ? TUTORIAL_STEPS
+      : TUTORIAL_STEPS.filter((step) => step.mode !== "onemus" && step.section !== "onemus");
+
     let tutorialStepIndex = 0;
     let tutorialActive = false;
 
@@ -11385,7 +11832,7 @@
     }
 
     function renderTutorialStep() {
-      const step = TUTORIAL_STEPS[tutorialStepIndex];
+      const step = TUTORIAL_STEPS_ACTIVE[tutorialStepIndex];
       if (!step) return;
 
       if (step.mode) setAppMode(step.mode);
@@ -11427,7 +11874,7 @@
           tutorialTitle.textContent = step.title;
           tutorialBody.innerHTML = step.body;
 
-          const total = TUTORIAL_STEPS.length;
+          const total = TUTORIAL_STEPS_ACTIVE.length;
           const current = tutorialStepIndex + 1;
           tutorialProgressBar.style.width = `${(current / total) * 100}%`;
           tutorialProgressText.textContent = `${current} / ${total}`;
@@ -11476,7 +11923,7 @@
     });
 
     tutorialNextBtn.addEventListener("click", () => {
-      if (tutorialStepIndex < TUTORIAL_STEPS.length - 1) {
+      if (tutorialStepIndex < TUTORIAL_STEPS_ACTIVE.length - 1) {
         tutorialStepIndex += 1;
         renderTutorialStep();
         return;
@@ -11499,11 +11946,12 @@
 
     window.addEventListener("resize", () => {
       if (!tutorialActive) return;
-      const step = TUTORIAL_STEPS[tutorialStepIndex];
+      const step = TUTORIAL_STEPS_ACTIVE[tutorialStepIndex];
       positionTutorialSpotlight(resolveTutorialTarget(step?.target));
     });
 
     function maybeStartTutorial() {
+      if (maybeShowTermsGate()) return;
       if (!isTutorialCompleted()) {
         openTutorial();
       }
