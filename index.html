@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PicAtom</title>
-  <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-picatom-16.png" id="appFavicon16">
-  <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-picatom-32.png" id="appFavicon32">
-  <link rel="apple-touch-icon" sizes="192x192" href="imagens/favicon-picatom-192.png" id="appAppleIcon">
+  <title>One For All</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-one-16.png" id="appFavicon16">
+  <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-one-32.png" id="appFavicon32">
+  <link rel="apple-touch-icon" sizes="192x192" href="imagens/favicon-one-192.png" id="appAppleIcon">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: "Cynatar";
+      src: url("fonts/Cynatar.otf") format("opentype");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
       --bg: #0a0a0a;
       --surface: #141414;
@@ -27,7 +35,6 @@
       --checker-b: #1a1a1a;
       --layout-side-width: 260px;
       --layout-history-width: 312px;
-      --brand-logo-size: 171px;
       --preview-top-height: 54px;
       --preview-zoombar-height: 54px;
       --preview-actions-height: 44px;
@@ -116,14 +123,40 @@
       background: linear-gradient(135deg, #0a0a0a 0%, #121212 55%, #1a1410 100%);
     }
 
+    header.onemus-mode {
+      background: linear-gradient(135deg, #0a0a0a 0%, #121212 55%, #1c1c1c 100%);
+    }
+
     header > * {
       position: relative;
       z-index: 1;
     }
 
+    .brand-lockup {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 2vw, 20px);
+    }
+
+    .brand-logo {
+      flex-shrink: 0;
+      width: clamp(76px, 9.5vw, 118px);
+      height: clamp(76px, 9.5vw, 118px);
+      object-fit: contain;
+      object-position: center;
+      border-radius: 14px;
+      filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.42));
+    }
+
     .brand-text {
       flex: 1 1 auto;
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
     }
 
     .header-modes {
@@ -183,10 +216,16 @@
       opacity: 0;
     }
 
+    .mode-indicator-bg-onemus {
+      background: linear-gradient(135deg, #9e9e9e 0%, var(--gold) 100%);
+      opacity: 0;
+    }
+
     .header-modes[data-active="desatom"] .mode-indicator-bg-picatom,
     .header-modes[data-active="redatom"] .mode-indicator-bg-picatom,
     .header-modes[data-active="tonatom"] .mode-indicator-bg-picatom,
-    .header-modes[data-active="movatom"] .mode-indicator-bg-picatom {
+    .header-modes[data-active="movatom"] .mode-indicator-bg-picatom,
+    .header-modes[data-active="onemus"] .mode-indicator-bg-picatom {
       opacity: 0;
     }
 
@@ -206,22 +245,35 @@
       opacity: 1;
     }
 
+    .header-modes[data-active="onemus"] .mode-indicator-bg-onemus {
+      opacity: 1;
+    }
+
     .header-modes[data-active="picatom"] .mode-indicator-bg-desatom,
     .header-modes[data-active="picatom"] .mode-indicator-bg-redatom,
     .header-modes[data-active="picatom"] .mode-indicator-bg-tonatom,
     .header-modes[data-active="picatom"] .mode-indicator-bg-movatom,
+    .header-modes[data-active="picatom"] .mode-indicator-bg-onemus,
     .header-modes[data-active="desatom"] .mode-indicator-bg-redatom,
     .header-modes[data-active="desatom"] .mode-indicator-bg-tonatom,
     .header-modes[data-active="desatom"] .mode-indicator-bg-movatom,
+    .header-modes[data-active="desatom"] .mode-indicator-bg-onemus,
     .header-modes[data-active="redatom"] .mode-indicator-bg-desatom,
     .header-modes[data-active="redatom"] .mode-indicator-bg-tonatom,
     .header-modes[data-active="redatom"] .mode-indicator-bg-movatom,
+    .header-modes[data-active="redatom"] .mode-indicator-bg-onemus,
     .header-modes[data-active="tonatom"] .mode-indicator-bg-desatom,
     .header-modes[data-active="tonatom"] .mode-indicator-bg-redatom,
     .header-modes[data-active="tonatom"] .mode-indicator-bg-movatom,
+    .header-modes[data-active="tonatom"] .mode-indicator-bg-onemus,
     .header-modes[data-active="movatom"] .mode-indicator-bg-desatom,
     .header-modes[data-active="movatom"] .mode-indicator-bg-redatom,
-    .header-modes[data-active="movatom"] .mode-indicator-bg-tonatom {
+    .header-modes[data-active="movatom"] .mode-indicator-bg-tonatom,
+    .header-modes[data-active="movatom"] .mode-indicator-bg-onemus,
+    .header-modes[data-active="onemus"] .mode-indicator-bg-desatom,
+    .header-modes[data-active="onemus"] .mode-indicator-bg-redatom,
+    .header-modes[data-active="onemus"] .mode-indicator-bg-tonatom,
+    .header-modes[data-active="onemus"] .mode-indicator-bg-movatom {
       opacity: 0;
     }
 
@@ -258,41 +310,39 @@
       outline-offset: 1px;
     }
 
+    .mode-btn .mode-one,
     .mode-btn .mode-pic,
     .mode-btn .mode-des,
     .mode-btn .mode-red,
     .mode-btn .mode-ton,
-    .mode-btn .mode-at,
-    .mode-btn .mode-om {
+    .mode-btn .mode-mov,
+    .mode-btn .mode-mus {
       transition: color 0.17s linear, opacity 0.17s linear;
     }
 
+    .mode-btn .mode-one,
     .mode-btn .mode-pic,
     .mode-btn .mode-des,
     .mode-btn .mode-red,
     .mode-btn .mode-ton,
-    .mode-btn .mode-mov {
+    .mode-btn .mode-mov,
+    .mode-btn .mode-mus {
       color: inherit;
     }
 
-    .mode-btn .mode-at {
-      color: inherit;
-      opacity: 0.92;
-    }
-
-    .mode-btn .mode-om {
-      color: inherit;
-    }
-
+    .mode-btn.active .mode-one,
     .mode-btn.active .mode-pic,
     .mode-btn.active .mode-des,
     .mode-btn.active .mode-red,
     .mode-btn.active .mode-ton,
     .mode-btn.active .mode-mov,
-    .mode-btn.active .mode-at,
-    .mode-btn.active .mode-om {
+    .mode-btn.active .mode-mus {
       color: #0a0a0a;
       opacity: 1;
+    }
+
+    .mode-btn:not(.active) .mode-one {
+      color: var(--gold-light);
     }
 
     .mode-btn:not(.active) .mode-pic {
@@ -315,12 +365,8 @@
       color: #FE9A3E;
     }
 
-    .mode-btn:not(.active) .mode-at {
-      color: var(--gold-light);
-    }
-
-    .mode-btn:not(.active) .mode-om {
-      color: #ffffff;
+    .mode-btn:not(.active) .mode-mus {
+      color: #bdbdbd;
     }
 
     .workspace {
@@ -452,7 +498,8 @@
     }
 
     .workspace.tonatom-mode,
-    .workspace.movatom-mode {
+    .workspace.movatom-mode,
+    .workspace.onemus-mode {
       grid-template-columns: var(--layout-side-width) minmax(0, 1fr);
     }
 
@@ -460,18 +507,28 @@
     .workspace.tonatom-mode > .workspace-col-right,
     .workspace.movatom-mode > .shared-preview,
     .workspace.movatom-mode > .workspace-col-right,
-    .workspace.movatom-mode > .tonatom-preview {
+    .workspace.movatom-mode > .tonatom-preview,
+    .workspace.onemus-mode > .shared-preview,
+    .workspace.onemus-mode > .workspace-col-right,
+    .workspace.onemus-mode > .tonatom-preview,
+    .workspace.onemus-mode > .movatom-preview {
       display: none !important;
     }
 
     .tonatom-preview,
-    .movatom-preview {
+    .movatom-preview,
+    .onemus-preview {
       display: none;
       min-width: 0;
       min-height: 0;
       height: 100%;
       overflow: hidden;
       gap: 12px;
+    }
+
+    .onemus-preview {
+      padding: 16px;
+      flex-direction: column;
     }
 
     .tonatom-preview {
@@ -490,8 +547,14 @@
       display: grid;
     }
 
+    .workspace.onemus-mode > .onemus-preview {
+      display: flex;
+      flex-direction: column;
+    }
+
     .tonatom-preview-top,
-    .movatom-preview-top {
+    .movatom-preview-top,
+    .onemus-preview-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -504,17 +567,29 @@
     }
 
     .tonatom-preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 12px;
       min-height: 0;
       flex: 1 1 auto;
       min-width: 0;
     }
 
+    .tonatom-preview-grid > .tonatom-preview-card:first-child {
+      flex: 0 1 42%;
+      max-height: 48%;
+      min-height: 140px;
+    }
+
+    .tonatom-preview-grid > .tonatom-batch-panel {
+      flex: 1 1 58%;
+      min-height: 180px;
+    }
+
     @media (max-width: 900px) {
-      .tonatom-preview-grid {
-        grid-template-columns: 1fr;
+      .tonatom-preview-grid > .tonatom-preview-card:first-child {
+        max-height: none;
+        flex: 0 0 auto;
       }
     }
 
@@ -738,6 +813,7 @@
       gap: 4px;
       padding: 0 0 18px;
       width: 100%;
+      cursor: pointer;
     }
 
     .tonatom-step:last-child {
@@ -805,8 +881,22 @@
     }
 
     .tonatom-step.is-active .tonatom-step-label,
-    .tonatom-step.is-done .tonatom-step-label {
+    .tonatom-step.is-done .tonatom-step-label,
+    .tonatom-step.is-available .tonatom-step-label {
       color: var(--text);
+    }
+
+    .tonatom-step.is-available .tonatom-step-dot {
+      opacity: 0.52;
+    }
+
+    .tonatom-step:hover .tonatom-step-dot {
+      opacity: 1;
+    }
+
+    .tonatom-step.is-active .tonatom-step-dot,
+    .tonatom-step.is-done .tonatom-step-dot {
+      opacity: 1;
     }
 
     .tonatom-step.is-complete-all .tonatom-step-label {
@@ -818,14 +908,11 @@
       color: #fff !important;
     }
 
-    #tonatomView [data-tonatom-step].tonatom-step-locked {
-      opacity: 0.38;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    #tonatomView [data-tonatom-step].tonatom-step-locked .file-picker-btn {
-      cursor: not-allowed;
+    #tonatomView [data-tonatom-step].tonatom-step-focused {
+      border-radius: 10px;
+      outline: 1px solid rgba(3, 139, 187, 0.5);
+      outline-offset: 2px;
+      background: rgba(3, 139, 187, 0.07);
     }
 
     #tonatomView .color-info {
@@ -904,12 +991,8 @@
       background: linear-gradient(135deg, #04a3d9 0%, #038bbb 100%);
     }
 
-    .brand-text h1 .ton {
+    .brand-text .brand-mode .ton {
       color: #038bbb;
-    }
-
-    header.tonatom-mode .brand-text h1 .om {
-      text-shadow: 0 0 18px rgba(3, 139, 187, 0.35);
     }
 
     .tutorial-section-badge.tonatom {
@@ -948,12 +1031,231 @@
       background: linear-gradient(135deg, #FFB366 0%, #FE9A3E 100%);
     }
 
-    .brand-text h1 .mov {
+    .brand-text .brand-mode .mov {
       color: #FE9A3E;
     }
 
-    header.movatom-mode .brand-text h1 .om {
-      text-shadow: 0 0 18px rgba(254, 154, 62, 0.35);
+    .brand-text .brand-mode .mus {
+      color: #bdbdbd;
+    }
+
+    .tutorial-section-badge.onemus {
+      background: rgba(158, 158, 158, 0.18);
+      color: #e0e0e0;
+      border-color: rgba(158, 158, 158, 0.45);
+    }
+
+    #onemusView textarea {
+      width: 100%;
+      min-height: 96px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    #onemusView textarea:focus {
+      outline: 2px solid rgba(158, 158, 158, 0.35);
+      outline-offset: 1px;
+    }
+
+    #onemusView .btn-primary {
+      background: linear-gradient(135deg, #bdbdbd 0%, #9e9e9e 100%);
+      border-color: #9e9e9e;
+      color: #1a1a1a;
+    }
+
+    #onemusView .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+    }
+
+    #onemusView input[type="range"] {
+      accent-color: #9e9e9e;
+    }
+
+    .onemus-status {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      min-height: 1.25em;
+    }
+
+    .onemus-status.ok { color: #a5d6a7; }
+    .onemus-status.error { color: var(--danger); }
+
+    .onemus-preview-top h2 {
+      margin-bottom: 0;
+    }
+
+    .onemus-track-count {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .onemus-bulk-rename {
+      flex: 0 0 auto;
+      padding: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .onemus-bulk-rename h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .onemus-rename-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .onemus-rename-row input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.88rem;
+    }
+
+    .onemus-rename-row .btn-secondary {
+      white-space: nowrap;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+
+    .onemus-track-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .onemus-track-empty {
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+      padding: 24px 12px;
+    }
+
+    .onemus-track {
+      padding: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .onemus-track.is-loading { border-color: rgba(158, 158, 158, 0.35); }
+    .onemus-track.is-ready { border-color: var(--border); }
+    .onemus-track.is-downloading,
+    .onemus-track.is-saving,
+    .onemus-track.is-active { border-color: rgba(189, 189, 189, 0.55); }
+    .onemus-track.is-done { border-color: rgba(165, 214, 167, 0.45); }
+    .onemus-track.is-error { border-color: rgba(231, 76, 60, 0.45); }
+
+    .onemus-track-origin {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .onemus-track-name {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .onemus-track-name:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .onemus-track-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .onemus-track-status {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .onemus-track.is-done .onemus-track-status { color: #a5d6a7; }
+    .onemus-track.is-error .onemus-track-status { color: var(--danger); }
+    .onemus-track.is-loading .onemus-track-status { color: #bdbdbd; }
+    .onemus-track.is-active .onemus-track-status { color: #bdbdbd; }
+
+    .onemus-track-progress-wrap {
+      height: 8px;
+      background: #2a2a2a;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .onemus-track-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #757575 0%, #bdbdbd 50%, #e0e0e0 100%);
+      border-radius: inherit;
+      transition: width 0.12s linear;
+    }
+
+    .onemus-track-progress-bar.is-loading {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 38%;
+      animation: onemusTrackLoad 1.1s ease-in-out infinite;
+    }
+
+    @keyframes onemusTrackLoad {
+      0% { transform: translateX(-110%); }
+      100% { transform: translateX(320%); }
+    }
+
+    .onemus-track-progress-pct {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #bdbdbd;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     .movatom-preview {
@@ -1366,51 +1668,48 @@
       }
     }
 
-    .brand-logo {
-      flex-shrink: 0;
-      width: var(--brand-logo-size);
-      height: var(--brand-logo-size);
-      object-fit: contain;
-      object-position: center;
-      border-radius: 12px;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+    .brand-logo-type {
+      margin: 0 0 10px;
+      padding: 0;
+      font-family: "Cynatar", "Segoe UI", system-ui, sans-serif;
+      font-size: clamp(3.25rem, 6.2vw, 5rem);
+      font-weight: normal;
+      line-height: 0.95;
+      letter-spacing: 0.06em;
+      color: #f4f4f4;
+      text-transform: none;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
     }
 
-    .brand-text h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 4px;
-      line-height: 1.2;
+    @media (max-width: 900px) {
+      .brand-logo-type {
+        font-size: clamp(2.2rem, 9vw, 3rem);
+        letter-spacing: 0.04em;
+      }
     }
 
-    .brand-text h1 .pic {
-      color: var(--sea-light);
+    .brand-text .brand-mode {
+      font-size: 1.62rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 6px;
+      line-height: 1.15;
     }
 
-    .brand-text h1 .at {
+    .brand-text .brand-mode .one {
       color: var(--gold-light);
     }
 
-    .brand-text h1 .des {
+    .brand-text .brand-mode .pic {
+      color: var(--sea-light);
+    }
+
+    .brand-text .brand-mode .des {
       color: #b388ff;
     }
 
-    .brand-text h1 .red {
+    .brand-text .brand-mode .red {
       color: #ff8a80;
-    }
-
-    .brand-text h1 .om {
-      color: #ffffff;
-      text-shadow: 0 0 18px rgba(46, 139, 87, 0.35);
-    }
-
-    header.desatom-mode .brand-text h1 .om {
-      text-shadow: 0 0 18px rgba(124, 77, 255, 0.35);
-    }
-
-    header.redatom-mode .brand-text h1 .om {
-      text-shadow: 0 0 18px rgba(198, 40, 40, 0.35);
     }
 
     .hidden {
@@ -1419,7 +1718,10 @@
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      max-width: 36em;
+      margin: 0;
     }
 
     .canvas-wrap.bg-gray-black { --checker-a: #808080; --checker-b: #1a1a1a; }
@@ -3103,12 +3405,15 @@
 <body>
   <div class="app">
     <header id="appHeader">
-      <img class="brand-logo" id="brandLogo" src="imagens/icon.png?v=8" alt="Ícone PicAtom">
-      <div class="brand-text">
-        <h1 id="brandTitle">
-          <span class="pic" id="brandPrefixPic">Pic</span><span class="des hidden" id="brandPrefixDes">Des</span><span class="red hidden" id="brandPrefixRed">Red</span><span class="ton hidden" id="brandPrefixTon">Ton</span><span class="mov hidden" id="brandPrefixMov">Mov</span><span class="at">At</span><span class="om">om</span>
-        </h1>
-        <p class="subtitle" id="brandSubtitle">Carregue uma imagem, clique na cor do fundo e remova com tolerância ajustável.</p>
+      <div class="brand-lockup">
+        <img class="brand-logo" id="brandLogo" src="imagens/One-logo.png?v=10" alt="One For All">
+        <div class="brand-text">
+          <h1 class="brand-logo-type" id="brandSuiteName">One For All</h1>
+          <h2 class="brand-mode" id="brandModeTitle">
+            <span class="one">One</span><span class="pic" id="brandPrefixPic">Pic</span><span class="des hidden" id="brandPrefixDes">Des</span><span class="red hidden" id="brandPrefixRed">Red</span><span class="ton hidden" id="brandPrefixTon">Ton</span><span class="mov hidden" id="brandPrefixMov">Mov</span><span class="mus hidden" id="brandPrefixMus">Mus</span>
+          </h2>
+          <p class="subtitle" id="brandSubtitle">Carregue uma imagem, clique na cor do fundo e remova com tolerância ajustável.</p>
+        </div>
       </div>
       <div class="header-modes" id="headerModes" data-active="picatom" role="tablist" aria-label="Modo do aplicativo">
         <span class="mode-indicator" id="modeIndicator" aria-hidden="true">
@@ -3117,21 +3422,25 @@
           <span class="mode-indicator-bg mode-indicator-bg-redatom"></span>
           <span class="mode-indicator-bg mode-indicator-bg-tonatom"></span>
           <span class="mode-indicator-bg mode-indicator-bg-movatom"></span>
+          <span class="mode-indicator-bg mode-indicator-bg-onemus"></span>
         </span>
         <button type="button" class="mode-btn active" id="modePicAtomBtn" data-mode="picatom" role="tab" aria-selected="true">
-          <span class="mode-pic">Pic</span><span class="mode-at">At</span><span class="mode-om">om</span>
+          <span class="mode-one">One</span><span class="mode-pic">Pic</span>
         </button>
         <button type="button" class="mode-btn" id="modeDesAtomBtn" data-mode="desatom" role="tab" aria-selected="false">
-          <span class="mode-des">Des</span><span class="mode-at">At</span><span class="mode-om">om</span>
+          <span class="mode-one">One</span><span class="mode-des">Des</span>
         </button>
         <button type="button" class="mode-btn" id="modeRedAtomBtn" data-mode="redatom" role="tab" aria-selected="false">
-          <span class="mode-red">Red</span><span class="mode-at">At</span><span class="mode-om">om</span>
+          <span class="mode-one">One</span><span class="mode-red">Red</span>
         </button>
         <button type="button" class="mode-btn" id="modeTonAtomBtn" data-mode="tonatom" role="tab" aria-selected="false">
-          <span class="mode-ton">Ton</span><span class="mode-at">At</span><span class="mode-om">om</span>
+          <span class="mode-one">One</span><span class="mode-ton">Ton</span>
         </button>
         <button type="button" class="mode-btn" id="modeMovAtomBtn" data-mode="movatom" role="tab" aria-selected="false">
-          <span class="mode-mov">Mov</span><span class="mode-at">At</span><span class="mode-om">om</span>
+          <span class="mode-one">One</span><span class="mode-mov">Mov</span>
+        </button>
+        <button type="button" class="mode-btn" id="modeOneMusBtn" data-mode="onemus" role="tab" aria-selected="false">
+          <span class="mode-one">One</span><span class="mode-mus">Mus</span>
         </button>
       </div>
       <button type="button" class="btn-secondary tutorial-help-btn" id="tutorialHelpBtn" title="Ver tutorial">Tutorial</button>
@@ -3327,7 +3636,7 @@
         <h2>Controles</h2>
 
           <div class="control">
-            <p class="desatom-hint" style="margin-top:0">Usa a mesma imagem do preview compartilhado. Carregue ou edite no PicAtom e volte aqui para o retoque de borda.</p>
+            <p class="desatom-hint" style="margin-top:0">Usa a mesma imagem do preview compartilhado. Carregue ou edite no OnePic e volte aqui para o retoque de borda.</p>
           </div>
 
           <div class="control">
@@ -3659,7 +3968,49 @@
         </div>
       </aside>
     </div>
+
+    <div class="app-view" id="onemusView">
+      <aside class="panel">
+        <h2>Controles</h2>
+
+        <div class="control">
+          <label for="onemusUrlInput">Link do YouTube</label>
+          <textarea id="onemusUrlInput" placeholder="Cole um ou mais links do YouTube (um por linha)…" spellcheck="false"></textarea>
+          <p class="settings-hint" style="margin-top:8px">Cole os links — as músicas carregam à direita com barra de progresso. Renomeie em lote antes de baixar.</p>
+        </div>
+
+        <div class="control">
+          <button type="button" class="btn-primary" id="onemusDownloadBtn" style="width:100%">Baixar músicas</button>
+          <p class="onemus-status" id="onemusStatus"></p>
+        </div>
+      </aside>
+    </div>
       </div>
+
+      <main class="panel onemus-preview" id="onemusPreview">
+        <div class="onemus-preview-top tonatom-preview-top">
+          <h2>Músicas</h2>
+          <span class="onemus-track-count" id="onemusTrackCount">0 faixas</span>
+        </div>
+
+        <div class="onemus-bulk-rename" id="onemusBulkRename">
+          <h3>Renomear em lote</h3>
+          <div class="onemus-rename-row">
+            <input type="text" id="onemusFindText" placeholder="Palavra-chave" spellcheck="false">
+            <input type="text" id="onemusReplaceText" placeholder="Substituir por" spellcheck="false">
+            <button type="button" class="btn-secondary" id="onemusReplaceBtn">Substituir</button>
+          </div>
+          <div class="onemus-rename-row">
+            <input type="text" id="onemusPrefixText" placeholder="Adicionar no início" spellcheck="false">
+            <input type="text" id="onemusSuffixText" placeholder="Adicionar no fim" spellcheck="false">
+            <button type="button" class="btn-secondary" id="onemusAffixBtn">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="onemus-track-list" id="onemusTrackList" aria-live="polite">
+          <p class="onemus-track-empty" id="onemusTrackEmpty">Cole links do YouTube à esquerda para carregar as músicas.</p>
+        </div>
+      </main>
 
       <main class="panel movatom-preview" id="movatomPreview">
         <div class="movatom-preview-top tonatom-preview-top">
@@ -3941,10 +4292,10 @@
     <div id="tutorialSpotlight" class="tutorial-spotlight hidden" aria-hidden="true"></div>
     <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
       <div class="tutorial-card-header">
-        <span class="tutorial-section-badge" id="tutorialSectionBadge">PicAtom · DesAtom · RedAtom · TonAtom</span>
+        <span class="tutorial-section-badge" id="tutorialSectionBadge">OnePic · OneDes · OneRed · OneTon · OneMov · OneMus</span>
         <button type="button" class="tutorial-skip-btn" id="tutorialSkipBtn">Pular tutorial</button>
       </div>
-      <h2 id="tutorialTitle">Bem-vindo ao PicAtom, DesAtom, RedAtom e TonAtom</h2>
+      <h2 id="tutorialTitle">Bem-vindo ao OnePic, OneDes, OneRed, OneTon, OneMov e OneMus</h2>
       <div class="tutorial-body" id="tutorialBody"></div>
       <div class="tutorial-progress">
         <div class="tutorial-progress-track">
@@ -3962,7 +4313,7 @@
   <div id="tutorialConfirm" class="tutorial-confirm hidden" role="alertdialog" aria-labelledby="tutorialConfirmTitle" aria-modal="true">
     <div class="tutorial-confirm-box">
       <h3 id="tutorialConfirmTitle">Pular tutorial?</h3>
-      <p>Tem certeza que deseja pular? O tutorial cobre <strong>PicAtom</strong>, <strong>DesAtom</strong>, <strong>RedAtom</strong> e <strong>TonAtom</strong>. Você poderá rever depois pelo botão <strong>Tutorial</strong> no topo.</p>
+      <p>Tem certeza que deseja pular? O tutorial cobre <strong>OnePic</strong>, <strong>OneDes</strong>, <strong>OneRed</strong>, <strong>OneTon</strong>, <strong>OneMov</strong> e <strong>OneMus</strong>. Você poderá rever depois pelo botão <strong>Tutorial</strong> no topo.</p>
       <div class="tutorial-confirm-actions">
         <button type="button" class="btn-secondary" id="tutorialConfirmCancel">Cancelar</button>
         <button type="button" class="btn-danger" id="tutorialConfirmOk">Sim, pular</button>
@@ -4144,7 +4495,7 @@
 
     // Cole aqui a URL do webhook do Discord
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1513926296311304273/4XbpqY13HaK78fYV7z7kQqTcm9S9x0sCd45vS1gRuzy3TdF129H0kMr43hLMgDbI29DR";
-    const DISCORD_MESSAGE = "Imagem enviada pelo PicAtom";
+    const DISCORD_MESSAGE = "Imagem enviada pelo OnePic";
     const PREVIEW_THEMES = [
       "gray-black", "white-gray", "white-black", "red-black",
       "blue-black", "green-black", "gold-black", "purple-black",
@@ -4433,8 +4784,11 @@
       const scale = zoomLevel / 100;
       const displayW = Math.round(canvas.width * scale);
       const displayH = Math.round(canvas.height * scale);
-      overlayCanvas.width = displayW;
-      overlayCanvas.height = displayH;
+
+      if (overlayCanvas.width !== canvas.width || overlayCanvas.height !== canvas.height) {
+        overlayCanvas.width = canvas.width;
+        overlayCanvas.height = canvas.height;
+      }
       overlayCanvas.style.width = `${displayW}px`;
       overlayCanvas.style.height = `${displayH}px`;
     }
@@ -4506,14 +4860,13 @@
         : activeTool === "wipe"
           ? Number(wipeSizeInput.value)
           : Number(eraserSizeInput.value);
-      const scale = zoomLevel / 100;
-      const cx = (coords.x + 0.5) * scale;
-      const cy = (coords.y + 0.5) * scale;
+      const cx = coords.x + 0.5;
+      const cy = coords.y + 0.5;
 
       overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
 
       if (activeTool === "wipe") {
-        const side = size * scale;
+        const side = size;
         const sx = cx - side / 2;
         const sy = cy - side / 2;
         overlayCtx.strokeStyle = "rgba(255, 255, 255, 0.95)";
@@ -4524,7 +4877,7 @@
         return;
       }
 
-      const radius = (size * scale) / 2;
+      const radius = size / 2;
       overlayCtx.beginPath();
       overlayCtx.arc(cx, cy, radius, 0, Math.PI * 2);
       if (activeTool === "paintbrush" && paintColor) {
@@ -4542,12 +4895,11 @@
     function drawLassoOverlay() {
       if (!lassoPoints.length) return;
       syncOverlayCanvas();
-      const scale = zoomLevel / 100;
       overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
       overlayCtx.beginPath();
       lassoPoints.forEach((point, index) => {
-        const x = point.x * scale;
-        const y = point.y * scale;
+        const x = point.x;
+        const y = point.y;
         if (index === 0) overlayCtx.moveTo(x, y);
         else overlayCtx.lineTo(x, y);
       });
@@ -4618,11 +4970,12 @@
       overlayCtx.clearRect(0, 0, cw, ch);
       if (!rect || rect.w < 1 || rect.h < 1) return;
 
+      const sx = rect.x;
+      const sy = rect.y;
+      const sw = rect.w;
+      const sh = rect.h;
       const scale = zoomLevel / 100;
-      const sx = rect.x * scale;
-      const sy = rect.y * scale;
-      const sw = rect.w * scale;
-      const sh = rect.h * scale;
+      const cross = Math.max(2, 8 / scale);
 
       if (rect.w < CROP_MIN_DRAG_PX && rect.h < CROP_MIN_DRAG_PX) {
         const cx = sx + sw / 2;
@@ -4630,10 +4983,10 @@
         overlayCtx.strokeStyle = "rgba(60, 179, 113, 0.98)";
         overlayCtx.lineWidth = 2;
         overlayCtx.beginPath();
-        overlayCtx.moveTo(cx - 8, cy);
-        overlayCtx.lineTo(cx + 8, cy);
-        overlayCtx.moveTo(cx, cy - 8);
-        overlayCtx.lineTo(cx, cy + 8);
+        overlayCtx.moveTo(cx - cross, cy);
+        overlayCtx.lineTo(cx + cross, cy);
+        overlayCtx.moveTo(cx, cy - cross);
+        overlayCtx.lineTo(cx, cy + cross);
         overlayCtx.stroke();
         return;
       }
@@ -4650,7 +5003,7 @@
       overlayCtx.strokeRect(sx + 0.5, sy + 0.5, Math.max(0, sw - 1), Math.max(0, sh - 1));
       overlayCtx.setLineDash([]);
 
-      overlayCtx.font = "600 12px Segoe UI, system-ui, sans-serif";
+      overlayCtx.font = `600 ${Math.max(8, Math.round(12 / scale))}px Segoe UI, system-ui, sans-serif`;
       overlayCtx.fillStyle = "rgba(212, 175, 55, 0.98)";
       overlayCtx.fillText(`${rect.w} × ${rect.h}`, sx + 6, Math.min(ch - 6, sy + sh - 8));
     }
@@ -5774,12 +6127,11 @@
       const cw = overlayCanvas.width;
       const ch = overlayCanvas.height;
       overlayCtx.clearRect(0, 0, cw, ch);
-      const scale = zoomLevel / 100;
 
       function drawCircle(circle, color, dash = []) {
         if (!circle || circle.r < 1) return;
         overlayCtx.beginPath();
-        overlayCtx.arc(circle.cx * scale, circle.cy * scale, circle.r * scale, 0, Math.PI * 2);
+        overlayCtx.arc(circle.cx, circle.cy, circle.r, 0, Math.PI * 2);
         overlayCtx.strokeStyle = color;
         overlayCtx.lineWidth = 2;
         overlayCtx.setLineDash(dash);
@@ -5801,8 +6153,8 @@
         );
         if (regionCircleSource) {
           overlayCtx.beginPath();
-          overlayCtx.moveTo(regionCircleSource.cx * scale, regionCircleSource.cy * scale);
-          overlayCtx.lineTo(current.cx * scale, current.cy * scale);
+          overlayCtx.moveTo(regionCircleSource.cx, regionCircleSource.cy);
+          overlayCtx.lineTo(current.cx, current.cy);
           overlayCtx.strokeStyle = "rgba(255, 255, 255, 0.45)";
           overlayCtx.lineWidth = 1.5;
           overlayCtx.setLineDash([4, 4]);
@@ -6837,6 +7189,7 @@
       }
 
       updatePixelGrid();
+      syncOverlayCanvas();
       scheduleSave();
     }
 
@@ -8234,14 +8587,17 @@
     const modeRedAtomBtn = document.getElementById("modeRedAtomBtn");
     const modeTonAtomBtn = document.getElementById("modeTonAtomBtn");
     const modeMovAtomBtn = document.getElementById("modeMovAtomBtn");
+    const modeOneMusBtn = document.getElementById("modeOneMusBtn");
     const workspace = document.getElementById("workspace");
     const picatomView = document.getElementById("picatomView");
     const desatomView = document.getElementById("desatomView");
     const redatomView = document.getElementById("redatomView");
     const tonatomView = document.getElementById("tonatomView");
     const movatomView = document.getElementById("movatomView");
+    const onemusView = document.getElementById("onemusView");
     const tonatomPreview = document.getElementById("tonatomPreview");
     const movatomPreview = document.getElementById("movatomPreview");
+    const onemusPreview = document.getElementById("onemusPreview");
     const toolsBar = document.getElementById("toolsBar");
     const desatomCompareToggle = document.getElementById("desatomCompareToggle");
     const redatomPreviewMeta = document.getElementById("redatomPreviewMeta");
@@ -8253,6 +8609,7 @@
     const brandPrefixRed = document.getElementById("brandPrefixRed");
     const brandPrefixTon = document.getElementById("brandPrefixTon");
     const brandPrefixMov = document.getElementById("brandPrefixMov");
+    const brandPrefixMus = document.getElementById("brandPrefixMus");
     const brandSubtitle = document.getElementById("brandSubtitle");
 
     const MODE_BUTTONS = {
@@ -8261,38 +8618,44 @@
       redatom: modeRedAtomBtn,
       tonatom: modeTonAtomBtn,
       movatom: modeMovAtomBtn,
+      onemus: modeOneMusBtn,
     };
 
     const IMAGES_DIR = "imagens/";
 
     const MODE_LOGOS = {
-      picatom: { src: `${IMAGES_DIR}icon.png`, alt: "Ícone PicAtom" },
-      desatom: { src: `${IMAGES_DIR}desatom-icon.png`, alt: "Logo DesAtom" },
-      redatom: { src: `${IMAGES_DIR}redatom-icon.png`, alt: "Logo RedAtom" },
-      tonatom: { src: `${IMAGES_DIR}tonatom-icon.png`, alt: "Logo TonAtom" },
-      movatom: { src: `${IMAGES_DIR}movatom-icon.png`, alt: "Logo MovAtom" },
+      picatom: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
+      desatom: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
+      redatom: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
+      tonatom: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
+      movatom: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
+      onemus: { src: `${IMAGES_DIR}One-logo.png`, alt: "One For All" },
     };
 
     const MODE_COPY = {
       picatom: {
-        title: "PicAtom",
+        title: "OnePic",
         subtitle: "Carregue uma imagem, clique na cor do fundo e remova com tolerância ajustável.",
       },
       desatom: {
-        title: "DesAtom",
+        title: "OneDes",
         subtitle: "Retoque fino nas bordas, removendo o halo de fundo que sobrou no recorte.",
       },
       redatom: {
-        title: "RedAtom",
+        title: "OneRed",
         subtitle: "Redimensione a imagem e escolha o formato de exportação (PNG, JPEG ou WebP).",
       },
       tonatom: {
-        title: "TonAtom",
-        subtitle: "Ajuste de tom em lote — estilo Ctrl+U.",
+        title: "OneTon",
+        subtitle: "Manipulador de Matiz (Hue) e Saturação",
       },
       movatom: {
-        title: "MovAtom",
+        title: "OneMov",
         subtitle: "Vídeo → frames → remove fundo → novo fundo → MP4.",
+      },
+      onemus: {
+        title: "OneMus",
+        subtitle: "Escolha onde salvar — o OneMus cria a pasta e baixa as músicas do YouTube.",
       },
     };
 
@@ -8305,18 +8668,10 @@
     }
 
     function updateAppFavicon(mode) {
-      const prefixes = {
-        picatom: "favicon-picatom",
-        desatom: "favicon-desatom",
-        redatom: "favicon-redatom",
-        tonatom: "favicon-tonatom",
-        movatom: "favicon-movatom",
-      };
-      const prefix = prefixes[mode] || "favicon-picatom";
-      const stamp = "?v=8";
-      appFavicon16.href = `${IMAGES_DIR}${prefix}-16.png${stamp}`;
-      appFavicon32.href = `${IMAGES_DIR}${prefix}-32.png${stamp}`;
-      appAppleIcon.href = `${IMAGES_DIR}${prefix}-192.png${stamp}`;
+      const stamp = "?v=10";
+      appFavicon16.href = `${IMAGES_DIR}favicon-one-16.png${stamp}`;
+      appFavicon32.href = `${IMAGES_DIR}favicon-one-32.png${stamp}`;
+      appAppleIcon.href = `${IMAGES_DIR}favicon-one-192.png${stamp}`;
     }
 
     function resetDesatomCompareIfNeeded(targetMode) {
@@ -8345,6 +8700,7 @@
         redatomView.classList.toggle("is-active", mode === "redatom");
         tonatomView.classList.toggle("is-active", mode === "tonatom");
         movatomView.classList.toggle("is-active", mode === "movatom");
+        onemusView.classList.toggle("is-active", mode === "onemus");
         currentAppMode = mode;
         resetDesatomCompareIfNeeded(mode);
       }
@@ -8353,10 +8709,12 @@
       workspace.classList.toggle("redatom-mode", mode === "redatom");
       workspace.classList.toggle("tonatom-mode", mode === "tonatom");
       workspace.classList.toggle("movatom-mode", mode === "movatom");
+      workspace.classList.toggle("onemus-mode", mode === "onemus");
       appHeader.classList.toggle("desatom-mode", mode === "desatom");
       appHeader.classList.toggle("redatom-mode", mode === "redatom");
       appHeader.classList.toggle("tonatom-mode", mode === "tonatom");
       appHeader.classList.toggle("movatom-mode", mode === "movatom");
+      appHeader.classList.toggle("onemus-mode", mode === "onemus");
       updateAppFavicon(mode);
       toolsBar.classList.toggle("hidden", mode !== "picatom");
       desatomCompareToggle.classList.toggle("hidden", mode !== "desatom");
@@ -8368,10 +8726,11 @@
       brandPrefixRed.classList.toggle("hidden", mode !== "redatom");
       brandPrefixTon.classList.toggle("hidden", mode !== "tonatom");
       brandPrefixMov.classList.toggle("hidden", mode !== "movatom");
+      brandPrefixMus.classList.toggle("hidden", mode !== "onemus");
       const logo = MODE_LOGOS[mode];
-      brandLogo.src = `${logo.src}?v=8`;
+      brandLogo.src = `${logo.src}?v=10`;
       brandLogo.alt = logo.alt;
-      document.title = MODE_COPY[mode].title;
+      document.title = `One For All — ${MODE_COPY[mode].title}`;
       brandSubtitle.textContent = MODE_COPY[mode].subtitle;
       syncDesAtomMeta();
       syncRedAtomFields();
@@ -8389,6 +8748,7 @@
     modeRedAtomBtn.addEventListener("click", () => setAppMode("redatom"));
     modeTonAtomBtn.addEventListener("click", () => setAppMode("tonatom"));
     modeMovAtomBtn.addEventListener("click", () => setAppMode("movatom"));
+    modeOneMusBtn.addEventListener("click", () => setAppMode("onemus"));
     window.addEventListener("resize", () => {
       updateModeIndicator(currentAppMode);
     });
@@ -8498,7 +8858,7 @@
         const alphaCut = Number(desatomAlphaCut.value);
         const result = refineEdgeImageData(currentImageData, erodePixels, alphaCut);
         if (!imageHasTransparency(currentImageData) && result.removed === 0) {
-          setDesAtomStatus("Esta imagem não parece ter transparência. Remova o fundo no PicAtom primeiro.", "error");
+          setDesAtomStatus("Esta imagem não parece ter transparência. Remova o fundo no OnePic primeiro.", "error");
           return;
         }
         currentImageData = result.imageData;
@@ -8946,6 +9306,7 @@
     let tonatomCompareView = "after";
     let tonatomPickMode = "origem";
     let tonatomWorkflowComplete = false;
+    let tonatomSelectedStep = 1;
 
     const TONATOM_STEP_COLORS = ["#FF9800", "#F44336", "#E91E63", "#9C27B0", "#038bbb"];
     const TONATOM_STEP_DONE_COLOR = "#43A047";
@@ -8966,9 +9327,23 @@
       return 4;
     }
 
-    function tonatomActiveStep() {
-      if (tonatomWorkflowComplete) return 1;
-      return Math.min(tonatomGetCompletedStep() + 1, 5);
+    function tonatomIsStepDone(step) {
+      if (step === 1) return !!tonatomRefImageData;
+      if (step === 2) return !!tonatomOrigemColor;
+      if (step === 3) return tonatomBatchFiles.length > 0;
+      if (step === 4) return !!tonatomAlvoColor;
+      return false;
+    }
+
+    function tonatomMarkWorkflowDirty() {
+      tonatomWorkflowComplete = false;
+    }
+
+    function setTonAtomSelectedStep(step) {
+      tonatomSelectedStep = Math.max(1, Math.min(5, Number(step) || 1));
+      const targets = tonatomView.querySelectorAll(`[data-tonatom-step="${tonatomSelectedStep}"]`);
+      targets[0]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      updateTonAtomControls();
     }
 
     function tonatomClearBatchState() {
@@ -8984,6 +9359,7 @@
 
     function tonatomResetWorkflowState() {
       tonatomWorkflowComplete = false;
+      tonatomSelectedStep = 1;
       tonatomRefImageData = null;
       tonatomOrigemColor = null;
       tonatomRefName.textContent = "Nenhuma";
@@ -8995,44 +9371,38 @@
     function updateTonAtomStepper() {
       if (!tonatomSteps) return;
       const steps = [...tonatomSteps.querySelectorAll(".tonatom-step")];
-      const done = tonatomWorkflowComplete ? 5 : tonatomGetCompletedStep();
-      const active = tonatomWorkflowComplete ? null : Math.min(done + 1, 5);
+      const active = tonatomSelectedStep;
 
       steps.forEach((el, idx) => {
         const n = idx + 1;
         const color = TONATOM_STEP_COLORS[idx];
         const dot = el.querySelector(".tonatom-step-dot");
-        el.classList.remove("is-done", "is-active", "is-pending", "is-complete-all");
+        el.classList.remove("is-done", "is-active", "is-pending", "is-complete-all", "is-available");
+        dot.style.opacity = "";
+        dot.style.background = color;
+        dot.style.color = "#fff";
 
         if (tonatomWorkflowComplete) {
           el.classList.add("is-complete-all");
           dot.style.background = TONATOM_STEP_DONE_COLOR;
-          dot.style.color = "#fff";
-        } else if (n <= done) {
-          el.classList.add("is-done");
-          dot.style.background = color;
-          dot.style.color = "#fff";
         } else if (n === active) {
           el.classList.add("is-active");
-          dot.style.background = color;
-          dot.style.color = "#fff";
+        } else if (tonatomIsStepDone(n)) {
+          el.classList.add("is-done");
         } else {
-          el.classList.add("is-pending");
-          dot.style.background = TONATOM_STEP_GRAY;
-          dot.style.color = "#444";
+          el.classList.add("is-available");
+          dot.style.opacity = "0.52";
         }
 
-        let lineFrom = TONATOM_STEP_GRAY;
-        let lineTo = TONATOM_STEP_GRAY;
+        const nextColor = TONATOM_STEP_COLORS[idx + 1];
+        let lineFrom = color;
+        let lineTo = nextColor || color;
         if (tonatomWorkflowComplete) {
           lineFrom = TONATOM_STEP_DONE_COLOR;
           lineTo = TONATOM_STEP_DONE_COLOR;
-        } else if (n <= done) {
-          lineFrom = color;
-          lineTo = n < done ? TONATOM_STEP_COLORS[idx + 1] : (active === n + 1 ? TONATOM_STEP_COLORS[idx + 1] : TONATOM_STEP_GRAY);
-        } else if (n === done + 1 && done > 0) {
-          lineFrom = TONATOM_STEP_COLORS[idx - 1];
-          lineTo = TONATOM_STEP_GRAY;
+        } else if (!tonatomIsStepDone(n) && n !== active) {
+          lineFrom = TONATOM_STEP_GRAY;
+          lineTo = tonatomIsStepDone(n + 1) || n + 1 === active ? nextColor || TONATOM_STEP_GRAY : TONATOM_STEP_GRAY;
         }
         el.style.setProperty("--tonatom-line-from", lineFrom);
         el.style.setProperty("--tonatom-line-to", lineTo);
@@ -9040,18 +9410,13 @@
       tonatomStepper?.classList.toggle("is-workflow-complete", tonatomWorkflowComplete);
     }
 
-    function updateTonAtomControlLocks() {
-      const active = tonatomActiveStep();
+    function updateTonAtomControlFocus() {
       tonatomView.querySelectorAll("[data-tonatom-step]").forEach((el) => {
         const step = Number(el.dataset.tonatomStep);
-        const stepMax = Number(el.dataset.tonatomStepMax || step);
-        let unlocked = false;
-        if (tonatomWorkflowComplete) {
-          unlocked = step === 1;
-        } else {
-          unlocked = active >= step && active <= stepMax;
+        el.classList.remove("tonatom-step-locked", "tonatom-step-focused");
+        if (step === tonatomSelectedStep) {
+          el.classList.add("tonatom-step-focused");
         }
-        el.classList.toggle("tonatom-step-locked", !unlocked);
       });
     }
 
@@ -9299,18 +9664,16 @@
     }
 
     function updateTonAtomControls() {
-      const active = tonatomActiveStep();
-      const done = tonatomGetCompletedStep();
-      const canProcess = !tonatomWorkflowComplete && active === 5 && done >= 4;
+      const canProcess = !!(tonatomOrigemColor && tonatomAlvoColor && tonatomBatchFiles.length);
 
-      updateTonAtomControlLocks();
+      updateTonAtomControlFocus();
       updateTonAtomStepper();
 
-      tonatomOrigemPickerBtn.disabled = active !== 2 || !tonatomRefImageData;
-      tonatomAlvoPickerBtn.disabled = active !== 4 || !tonatomBatchImageData;
+      tonatomOrigemPickerBtn.disabled = !tonatomRefImageData;
+      tonatomAlvoPickerBtn.disabled = !tonatomBatchImageData;
       tonatomProcessBtn.disabled = !canProcess;
-      tonatomShowBeforeBtn.disabled = !tonatomBatchImageData || active < 4;
-      tonatomShowAfterBtn.disabled = !tonatomBatchProcessed || active < 4;
+      tonatomShowBeforeBtn.disabled = !tonatomBatchImageData;
+      tonatomShowAfterBtn.disabled = !tonatomBatchProcessed;
     }
 
     function imageDataToBlob(imageData, mimeType = "image/png") {
@@ -9384,6 +9747,7 @@
           "ok",
         );
         tonatomWorkflowComplete = true;
+        tonatomSelectedStep = 5;
       } catch (err) {
         setTonAtomStatus(err?.message || "Erro ao salvar.", "error");
       } finally {
@@ -9408,8 +9772,9 @@
     }
 
     function pickTonAtomOrigemFromEvent(event) {
-      if (tonatomActiveStep() !== 2 || !tonatomRefImageData) return;
+      if (!tonatomRefImageData) return;
       pickTonAtomColorFromCanvas(event, tonatomRefCanvas, tonatomRefImageData, (color) => {
+        tonatomMarkWorkflowDirty();
         tonatomOrigemColor = color;
         updateTonAtomOrigemUI();
         rebuildTonAtomPreview();
@@ -9419,8 +9784,9 @@
     }
 
     function pickTonAtomAlvoFromEvent(event) {
-      if (tonatomActiveStep() !== 4 || !tonatomBatchImageData) return;
+      if (!tonatomBatchImageData) return;
       pickTonAtomColorFromCanvas(event, tonatomBatchCanvas, tonatomBatchImageData, (color) => {
+        tonatomMarkWorkflowDirty();
         tonatomAlvoColor = color;
         updateTonAtomAlvoUI();
         rebuildTonAtomPreview();
@@ -9433,9 +9799,7 @@
     tonatomRefInput.addEventListener("change", async () => {
       const file = tonatomRefInput.files?.[0];
       if (!file) return;
-      if (tonatomWorkflowComplete) {
-        tonatomResetWorkflowState();
-      }
+      tonatomMarkWorkflowDirty();
       tonatomRefName.textContent = file.name;
       try {
         tonatomRefImageData = await loadImageFileToData(file);
@@ -9471,13 +9835,14 @@
     });
 
     tonatomTolerance.addEventListener("input", () => {
+      tonatomMarkWorkflowDirty();
       tonatomToleranceValue.textContent = tonatomTolerance.value;
       rebuildTonAtomPreview();
       paintTonAtomBatchPreview();
     });
 
     async function setTonAtomBatchFromFileList(fileList) {
-      if (tonatomActiveStep() !== 3) return;
+      tonatomMarkWorkflowDirty();
       tonatomBatchFiles = [...fileList].filter(isTonAtomImageFile);
       tonatomBatchIndex = tonatomBatchFiles.length ? 0 : -1;
       tonatomAlvoColor = null;
@@ -9509,6 +9874,13 @@
 
     tonatomShowAfterBtn.addEventListener("click", () => setTonAtomCompareView("after"));
     tonatomShowBeforeBtn.addEventListener("click", () => setTonAtomCompareView("before"));
+
+    tonatomSteps?.querySelectorAll(".tonatom-step").forEach((el) => {
+      el.addEventListener("click", () => {
+        const step = Number(el.dataset.step);
+        if (step) setTonAtomSelectedStep(step);
+      });
+    });
 
     updateTonAtomOrigemUI();
     updateTonAtomAlvoUI();
@@ -9919,6 +10291,731 @@
     updateMovAtomBgUI();
     movatomUpdateControls();
 
+    const onemusUrlInput = document.getElementById("onemusUrlInput");
+    const onemusDownloadBtn = document.getElementById("onemusDownloadBtn");
+    const onemusStatus = document.getElementById("onemusStatus");
+    const onemusTrackList = document.getElementById("onemusTrackList");
+    const onemusTrackEmpty = document.getElementById("onemusTrackEmpty");
+    const onemusTrackCount = document.getElementById("onemusTrackCount");
+    const onemusFindText = document.getElementById("onemusFindText");
+    const onemusReplaceText = document.getElementById("onemusReplaceText");
+    const onemusPrefixText = document.getElementById("onemusPrefixText");
+    const onemusSuffixText = document.getElementById("onemusSuffixText");
+    const onemusReplaceBtn = document.getElementById("onemusReplaceBtn");
+    const onemusAffixBtn = document.getElementById("onemusAffixBtn");
+
+    const ONEMUS_FETCH_TIMEOUT_MS = 12000;
+
+    const ONEMUS_PIPED_INSTANCES = [
+      "https://pipedapi.kavin.rocks",
+      "https://pipedapi-libre.kavin.rocks",
+      "https://pipedapi.orangenet.cc",
+      "https://pipedapi.leptons.xyz",
+      "https://pipedapi.adminforge.de",
+      "https://piped-api.privacy.com.de",
+      "https://pipedapi.ducks.party",
+      "https://pipedapi.owo.si",
+      "https://api.piped.yt",
+    ];
+
+    const ONEMUS_INVIDIOUS_STATIC = ["https://inv.thepixora.com"];
+
+    let onemusInvidiousCache = { at: 0, bases: [] };
+
+    let onemusTracks = [];
+    let onemusBusy = false;
+    let onemusInputTimer = null;
+    let onemusLoadToken = 0;
+
+    function setOnemusStatus(message, type = "") {
+      onemusStatus.textContent = message || "";
+      onemusStatus.classList.remove("ok", "error");
+      if (type) onemusStatus.classList.add(type);
+    }
+
+    function extractYouTubeVideoId(raw) {
+      const text = String(raw || "").trim();
+      if (!text) return null;
+      if (/^[a-zA-Z0-9_-]{11}$/.test(text)) return text;
+      try {
+        const url = new URL(text);
+        const host = url.hostname.replace(/^www\./, "");
+        if (host === "youtu.be") {
+          return url.pathname.slice(1).split("/")[0] || null;
+        }
+        if (host.includes("youtube.com")) {
+          const fromQuery = url.searchParams.get("v");
+          if (fromQuery) return fromQuery;
+          const pathMatch = url.pathname.match(/\/(shorts|embed|live|v)\/([^/?]+)/);
+          if (pathMatch) return pathMatch[2];
+        }
+      } catch {
+        return null;
+      }
+      return null;
+    }
+
+    function parseOnemusUrls(text) {
+      const seen = new Set();
+      const urls = [];
+      for (const line of String(text || "").split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        const videoId = extractYouTubeVideoId(trimmed);
+        if (!videoId || seen.has(videoId)) continue;
+        seen.add(videoId);
+        urls.push({ url: trimmed, videoId });
+      }
+      return urls;
+    }
+
+    function sanitizeOnemusFileName(name) {
+      const cleaned = String(name || "musica")
+        .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 180);
+      return cleaned || "musica";
+    }
+
+    function onemusAudioExtension(stream) {
+      const format = String(stream?.format || "").toLowerCase();
+      if (format.includes("mp3")) return ".mp3";
+      if (format.includes("opus")) return ".opus";
+      if (format.includes("webm")) return ".webm";
+      if (format.includes("m4a") || format.includes("mp4")) return ".m4a";
+      const mime = String(stream?.mimeType || "").toLowerCase();
+      if (mime.includes("mpeg")) return ".mp3";
+      if (mime.includes("opus")) return ".opus";
+      if (mime.includes("webm")) return ".webm";
+      return ".m4a";
+    }
+
+    function pickOnemusBestAudio(audioStreams) {
+      if (!Array.isArray(audioStreams) || !audioStreams.length) {
+        throw new Error("Nenhuma faixa de áudio encontrada neste vídeo.");
+      }
+      return [...audioStreams].sort((a, b) => {
+        const br = (b.bitrate || 0) - (a.bitrate || 0);
+        if (br !== 0) return br;
+        return (b.contentLength || 0) - (a.contentLength || 0);
+      })[0];
+    }
+
+    function onemusHumanizeError(err) {
+      if (err?.name === "AbortError") {
+        return "Tempo esgotado ao contactar o servidor.";
+      }
+      const msg = String(err?.message || err || "").trim();
+      if (!msg || msg === "Failed to fetch") {
+        if (location.protocol === "file:") {
+          return "Abra o app via HTTPS (GitHub Pages ou localhost), não como ficheiro local.";
+        }
+        return "Falha de rede ou bloqueio CORS. Tente outra instância ou mais tarde.";
+      }
+      return msg;
+    }
+
+    async function onemusFetchJson(url, init = {}, timeoutMs = ONEMUS_FETCH_TIMEOUT_MS) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...init, signal: ctrl.signal });
+        if (!res.ok) {
+          throw new Error(`Servidor respondeu ${res.status}`);
+        }
+        const text = await res.text();
+        if (!text.trimStart().startsWith("{")) {
+          throw new Error("Resposta inválida do servidor");
+        }
+        return JSON.parse(text);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function getOnemusInvidiousBases() {
+      const now = Date.now();
+      if (onemusInvidiousCache.bases.length && now - onemusInvidiousCache.at < 3600000) {
+        return onemusInvidiousCache.bases;
+      }
+      let bases = [...ONEMUS_INVIDIOUS_STATIC];
+      try {
+        const data = await onemusFetchJson("https://api.invidious.io/instances.json?sort_by=health");
+        const live = data
+          .filter(([, meta]) => meta?.cors && meta?.api && meta?.type === "https" && meta?.monitor?.down !== true)
+          .map(([, meta]) => String(meta.uri || "").replace(/\/$/, ""))
+          .filter(Boolean);
+        bases = [...new Set([...ONEMUS_INVIDIOUS_STATIC, ...live])];
+      } catch {
+        /* mantém lista estática */
+      }
+      onemusInvidiousCache = { at: now, bases };
+      return bases;
+    }
+
+    async function fetchOnemusInvidiousStreams(videoId) {
+      const bases = await getOnemusInvidiousBases();
+      let lastError = null;
+      for (const base of bases) {
+        try {
+          const data = await onemusFetchJson(`${base}/api/v1/videos/${encodeURIComponent(videoId)}`, {
+            headers: { Accept: "application/json" },
+          });
+          const audioFormats = (data.adaptiveFormats || []).filter((f) =>
+            String(f.type || "").startsWith("audio/"),
+          );
+          if (!audioFormats.length) {
+            lastError = new Error("Resposta sem áudio");
+            continue;
+          }
+          return {
+            title: data.title,
+            source: "invidious",
+            sourceBase: base,
+            videoId,
+            audioStreams: audioFormats.map((f) => ({
+              url: f.url,
+              itag: f.itag,
+              bitrate: Number(f.bitrate) || 0,
+              mimeType: f.type,
+              format: f.container,
+              contentLength: Number(f.clen) || 0,
+            })),
+          };
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error("Não foi possível obter informações do vídeo.");
+    }
+
+    async function fetchOnemusPipedStreams(videoId) {
+      let lastError = null;
+      for (const base of ONEMUS_PIPED_INSTANCES) {
+        try {
+          const data = await onemusFetchJson(`${base}/streams/${encodeURIComponent(videoId)}`, {
+            headers: { Accept: "application/json" },
+          });
+          if (data?.audioStreams?.length) {
+            return {
+              ...data,
+              source: "piped",
+              sourceBase: base,
+              videoId,
+            };
+          }
+          lastError = new Error("Resposta sem áudio");
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error("Servidores Piped indisponíveis.");
+    }
+
+    async function fetchOnemusStreamMeta(videoId) {
+      try {
+        return await fetchOnemusInvidiousStreams(videoId);
+      } catch (invidiousErr) {
+        try {
+          return await fetchOnemusPipedStreams(videoId);
+        } catch (pipedErr) {
+          throw invidiousErr || pipedErr;
+        }
+      }
+    }
+
+    function buildOnemusAudioDownloadUrls(track, audio) {
+      const urls = [];
+      const meta = track.meta;
+      const id = meta?.videoId || track.videoId;
+
+      if (meta?.source === "piped" && audio?.url) {
+        urls.push(audio.url);
+      }
+
+      if (meta?.source === "invidious" && meta.sourceBase && audio?.itag && id) {
+        const base = meta.sourceBase;
+        urls.push(
+          `${base}/latest_version?id=${encodeURIComponent(id)}&itag=${audio.itag}&local=true`,
+        );
+        urls.push(`${base}/latest_version?id=${encodeURIComponent(id)}&itag=${audio.itag}`);
+        if (audio?.url) {
+          try {
+            urls.push(`${base}/videoplayback${new URL(audio.url).search}`);
+          } catch {
+            /* ignora URL inválida */
+          }
+        }
+      }
+
+      if (audio?.url && !urls.includes(audio.url)) {
+        urls.push(audio.url);
+      }
+
+      return [...new Set(urls)];
+    }
+
+    async function refreshOnemusTrackMetaForDownload(track) {
+      const preferredBase = track.meta?.sourceBase;
+      let meta = await fetchOnemusStreamMeta(track.videoId);
+      if (preferredBase && meta?.source === "invidious" && meta.sourceBase !== preferredBase) {
+        try {
+          const data = await onemusFetchJson(
+            `${preferredBase}/api/v1/videos/${encodeURIComponent(track.videoId)}`,
+            { headers: { Accept: "application/json" } },
+          );
+          const audioFormats = (data.adaptiveFormats || []).filter((f) =>
+            String(f.type || "").startsWith("audio/"),
+          );
+          if (audioFormats.length) {
+            meta = {
+              title: data.title,
+              source: "invidious",
+              sourceBase: preferredBase,
+              videoId: track.videoId,
+              audioStreams: audioFormats.map((f) => ({
+                url: f.url,
+                itag: f.itag,
+                bitrate: Number(f.bitrate) || 0,
+                mimeType: f.type,
+                format: f.container,
+                contentLength: Number(f.clen) || 0,
+              })),
+            };
+          }
+        } catch {
+          /* usa meta já obtida */
+        }
+      }
+      track.meta = meta;
+      return meta;
+    }
+
+    async function fetchOnemusBlobFromUrl(url, onProgress) {
+      const res = await fetch(url, {
+        headers: { Referer: "https://www.youtube.com/" },
+      });
+      if (!res.ok) throw new Error(`Falha ao baixar áudio (${res.status})`);
+      const total = Number(res.headers.get("content-length")) || 0;
+      if (!res.body || !total) {
+        const blob = await res.blob();
+        onProgress(100);
+        return blob;
+      }
+      const reader = res.body.getReader();
+      const chunks = [];
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+        onProgress(Math.min(99, Math.round((received / total) * 100)));
+      }
+      onProgress(100);
+      const mime = res.headers.get("content-type") || "audio/mp4";
+      return new Blob(chunks, { type: mime });
+    }
+
+    async function fetchOnemusBlobWithProgress(urlOrUrls, onProgress) {
+      const urls = Array.isArray(urlOrUrls) ? urlOrUrls : [urlOrUrls];
+      let lastError = null;
+      for (const url of urls) {
+        try {
+          return await fetchOnemusBlobFromUrl(url, onProgress);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error("Não foi possível baixar o áudio.");
+    }
+
+    async function saveOnemusBlob(outputTarget, fileName, blob) {
+      if (!outputTarget?.handle) {
+        throw new Error("Pasta de destino indisponível.");
+      }
+      const fileHandle = await outputTarget.handle.getFileHandle(fileName, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+    }
+
+    function buildOnemusFolderName(date = new Date()) {
+      return `OneMus ${formatOnemusFolderStamp(date)}`;
+    }
+
+    async function pickOnemusParentDir() {
+      if (!window.showDirectoryPicker) {
+        throw new Error("Use Chrome ou Edge no Windows para escolher onde salvar.");
+      }
+      return window.showDirectoryPicker({
+        mode: "readwrite",
+        startIn: "downloads",
+        id: "onemus-save",
+      });
+    }
+
+    async function prepareOnemusOutputTarget() {
+      const parentDir = await pickOnemusParentDir();
+      const folderName = buildOnemusFolderName();
+      const created = await createOnemusMusicFolder(parentDir, folderName);
+      return { handle: created.handle, folderName: created.name };
+    }
+
+    function formatOnemusFolderStamp(date = new Date()) {
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${pad(date.getHours())}h${pad(date.getMinutes())}`;
+    }
+
+    async function createOnemusMusicFolder(parentHandle, preferredName) {
+      const stamp = formatOnemusFolderStamp();
+      const baseName = preferredName || `OneMus ${stamp}`;
+      for (let i = 0; i < 50; i += 1) {
+        const name = i === 0 ? baseName : `${baseName} (${i + 1})`;
+        try {
+          await parentHandle.getDirectoryHandle(name);
+        } catch (err) {
+          if (err?.name === "NotFoundError") {
+            return { handle: await parentHandle.getDirectoryHandle(name, { create: true }), name };
+          }
+          throw err;
+        }
+      }
+      const fallback = `${baseName} ${Date.now()}`;
+      return {
+        handle: await parentHandle.getDirectoryHandle(fallback, { create: true }),
+        name: fallback,
+      };
+    }
+
+    function onemusTrackStatusLabel(track) {
+      if (track.status === "loading") return "Carregando…";
+      if (track.status === "ready") return "Pronta";
+      if (track.status === "downloading") return `${Math.round(track.progress || 0)}%`;
+      if (track.status === "saving") return "Salvando…";
+      if (track.status === "done") return "OK";
+      if (track.status === "error") return "Erro";
+      return "";
+    }
+
+    function updateOnemusDownloadButton() {
+      const loading = onemusTracks.some((t) => t.status === "loading");
+      const hasReady = onemusTracks.some((t) => t.status === "ready");
+      onemusDownloadBtn.disabled = onemusBusy || loading || !hasReady;
+    }
+
+    function renderOnemusTrackList() {
+      const readyCount = onemusTracks.filter((t) => t.status === "ready" || t.status === "done").length;
+      onemusTrackCount.textContent = onemusTracks.length
+        ? `${onemusTracks.length} faixa${onemusTracks.length === 1 ? "" : "s"} · ${readyCount} pronta${readyCount === 1 ? "" : "s"}`
+        : "0 faixas";
+
+      onemusTrackList.querySelectorAll(".onemus-track").forEach((el) => el.remove());
+
+      if (!onemusTracks.length) {
+        onemusTrackEmpty.classList.remove("hidden");
+        updateOnemusDownloadButton();
+        return;
+      }
+
+      onemusTrackEmpty.classList.add("hidden");
+
+      for (const track of onemusTracks) {
+        const card = document.createElement("article");
+        card.className = `onemus-track is-${track.status}`;
+        card.dataset.trackId = track.id;
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.className = "onemus-track-name";
+        nameInput.value = track.displayName || track.originalTitle || track.url;
+        nameInput.disabled = track.status === "loading" || onemusBusy;
+        nameInput.spellcheck = false;
+        nameInput.addEventListener("input", () => {
+          track.displayName = nameInput.value;
+        });
+
+        const meta = document.createElement("div");
+        meta.className = "onemus-track-meta";
+        const origin = document.createElement("span");
+        origin.className = "onemus-track-origin";
+        origin.textContent = track.originalTitle
+          ? `Original: ${track.originalTitle}`
+          : track.url;
+        origin.title = track.url;
+        const status = document.createElement("span");
+        status.className = "onemus-track-status";
+        status.textContent = onemusTrackStatusLabel(track);
+        meta.append(origin, status);
+
+        const progressWrap = document.createElement("div");
+        progressWrap.className = "onemus-track-progress-wrap";
+        const progressBar = document.createElement("div");
+        progressBar.className = "onemus-track-progress-bar";
+        if (track.status === "loading") {
+          progressBar.classList.add("is-loading");
+        } else if (track.status === "downloading" || track.status === "saving") {
+          progressBar.style.width = `${Math.max(0, Math.min(100, Math.round(track.progress || 0)))}%`;
+        } else if (track.status === "done") {
+          progressBar.style.width = "100%";
+        }
+        progressWrap.appendChild(progressBar);
+
+        const pct = document.createElement("span");
+        pct.className = "onemus-track-progress-pct";
+        if (track.status === "loading") {
+          pct.textContent = "Carregando informações…";
+        } else if (track.status === "downloading") {
+          pct.textContent = `${Math.round(track.progress || 0)}%`;
+        } else if (track.status === "saving") {
+          pct.textContent = "Salvando no disco…";
+        } else if (track.status === "done") {
+          pct.textContent = "100%";
+        } else if (track.status === "error") {
+          pct.textContent = track.error || "Falha ao carregar";
+        } else {
+          pct.textContent = "";
+        }
+
+        card.append(nameInput, meta, progressWrap, pct);
+        onemusTrackList.appendChild(card);
+      }
+
+      updateOnemusDownloadButton();
+    }
+
+    async function loadOnemusTrackMeta(track) {
+      try {
+        const meta = await fetchOnemusStreamMeta(track.videoId);
+        track.meta = meta;
+        track.originalTitle = meta.title || `Vídeo ${track.videoId}`;
+        if (!track.displayName) track.displayName = track.originalTitle;
+        track.status = "ready";
+        track.progress = 0;
+        track.error = "";
+      } catch (err) {
+        track.status = "error";
+        track.error = onemusHumanizeError(err);
+        track.displayName = track.displayName || track.url;
+      }
+      renderOnemusTrackList();
+    }
+
+    async function loadOnemusTracksFromInput() {
+      const entries = parseOnemusUrls(onemusUrlInput.value);
+      const loadToken = ++onemusLoadToken;
+      const oldByVideo = new Map(onemusTracks.map((t) => [t.videoId, t]));
+
+      if (!entries.length) {
+        onemusTracks = [];
+        renderOnemusTrackList();
+        return;
+      }
+
+      const next = entries.map((entry) => {
+        const prev = oldByVideo.get(entry.videoId);
+        if (prev && prev.meta && prev.status !== "loading") {
+          return { ...prev, url: entry.url };
+        }
+        if (prev && prev.status === "loading") {
+          return { ...prev, url: entry.url };
+        }
+        return {
+          id: `tr-${entry.videoId}-${Math.random().toString(36).slice(2, 8)}`,
+          url: entry.url,
+          videoId: entry.videoId,
+          originalTitle: "",
+          displayName: prev?.displayName || "",
+          status: "loading",
+          progress: 0,
+          meta: null,
+          error: "",
+          fileName: "",
+        };
+      });
+
+      onemusTracks = next;
+      renderOnemusTrackList();
+
+      const toLoad = onemusTracks.filter((t) => t.status === "loading");
+      await Promise.all(
+        toLoad.map(async (track) => {
+          await loadOnemusTrackMeta(track);
+          if (loadToken !== onemusLoadToken) return;
+        }),
+      );
+
+      if (loadToken === onemusLoadToken) {
+        const ok = onemusTracks.filter((t) => t.status === "ready").length;
+        const fail = onemusTracks.filter((t) => t.status === "error").length;
+        if (ok && fail) {
+          setOnemusStatus(`${ok} carregada(s), ${fail} com erro.`, "error");
+        } else if (fail && !ok) {
+          setOnemusStatus("Não foi possível carregar os links.", "error");
+        } else if (ok) {
+          setOnemusStatus(`${ok} música(s) carregada(s).`, "ok");
+        }
+      }
+    }
+
+    function scheduleOnemusInputLoad() {
+      clearTimeout(onemusInputTimer);
+      onemusInputTimer = setTimeout(() => loadOnemusTracksFromInput(), 400);
+    }
+
+    function applyOnemusBulkReplace() {
+      const find = onemusFindText.value;
+      if (!find) {
+        setOnemusStatus("Informe a palavra-chave para substituir.", "error");
+        return;
+      }
+      const replace = onemusReplaceText.value;
+      let count = 0;
+      for (const track of onemusTracks) {
+        if (track.status === "loading") continue;
+        const name = track.displayName || track.originalTitle || "";
+        if (!name.includes(find)) continue;
+        track.displayName = name.split(find).join(replace);
+        count += 1;
+      }
+      renderOnemusTrackList();
+      setOnemusStatus(
+        count ? `${count} nome(s) atualizado(s).` : "Nenhum nome contém essa palavra-chave.",
+        count ? "ok" : "",
+      );
+    }
+
+    function applyOnemusBulkAffixes() {
+      const prefix = onemusPrefixText.value || "";
+      const suffix = onemusSuffixText.value || "";
+      if (!prefix && !suffix) {
+        setOnemusStatus("Informe texto para adicionar no início ou no fim.", "error");
+        return;
+      }
+      let count = 0;
+      for (const track of onemusTracks) {
+        if (track.status === "loading") continue;
+        const name = track.displayName || track.originalTitle || "";
+        track.displayName = `${prefix}${name}${suffix}`;
+        count += 1;
+      }
+      renderOnemusTrackList();
+      setOnemusStatus(`${count} nome(s) atualizado(s).`, "ok");
+    }
+
+    async function processOnemusItem(track, outputTarget) {
+      if (!track.meta) {
+        await loadOnemusTrackMeta(track);
+        if (track.status === "error") throw new Error(track.error || "Erro ao carregar");
+      }
+
+      const meta = await refreshOnemusTrackMetaForDownload(track);
+      const audio = pickOnemusBestAudio(meta.audioStreams);
+      if (!audio?.url && !audio?.itag) throw new Error("URL de áudio indisponível.");
+
+      track.status = "downloading";
+      track.progress = 0;
+      renderOnemusTrackList();
+
+      const blob = await fetchOnemusBlobWithProgress(buildOnemusAudioDownloadUrls(track, audio), (pct) => {
+        track.progress = pct;
+        renderOnemusTrackList();
+      });
+
+      const ext = onemusAudioExtension(audio);
+      const baseName = sanitizeOnemusFileName(track.displayName || track.originalTitle);
+      let fileName = `${baseName}${ext}`;
+      track.status = "saving";
+      track.progress = 100;
+      renderOnemusTrackList();
+
+      if (outputTarget?.handle) {
+        try {
+          await outputTarget.handle.getFileHandle(fileName);
+          fileName = `${baseName} (${track.videoId})${ext}`;
+        } catch {
+          /* nome livre */
+        }
+      }
+
+      await saveOnemusBlob(outputTarget, fileName, blob);
+      track.fileName = fileName;
+      track.status = "done";
+      track.progress = 100;
+      renderOnemusTrackList();
+    }
+
+    async function processOnemusDownloads() {
+      const ready = onemusTracks.filter((t) => t.status === "ready");
+      if (!ready.length) {
+        setOnemusStatus("Cole links e aguarde carregar as músicas.", "error");
+        return;
+      }
+
+      let outputTarget;
+      try {
+        outputTarget = await prepareOnemusOutputTarget();
+      } catch (err) {
+        if (err?.name === "AbortError") {
+          setOnemusStatus("Seleção de pasta cancelada.", "");
+          return;
+        }
+        setOnemusStatus(err?.message || "Não foi possível criar a pasta OneMus.", "error");
+        return;
+      }
+
+      const outputFolderName = outputTarget.folderName;
+
+      onemusBusy = true;
+      onemusDownloadBtn.disabled = true;
+      renderOnemusTrackList();
+      setOnemusStatus(`Criando pasta «${outputFolderName}» e baixando…`);
+
+      let ok = 0;
+      let fail = 0;
+
+      for (const track of ready) {
+        try {
+          await processOnemusItem(track, outputTarget);
+          ok += 1;
+        } catch (err) {
+          track.status = "error";
+          track.error = onemusHumanizeError(err);
+          fail += 1;
+          renderOnemusTrackList();
+        }
+      }
+
+      onemusBusy = false;
+      renderOnemusTrackList();
+
+      if (fail && ok) {
+        setOnemusStatus(
+          `${ok} salva(s) em «${outputFolderName}», ${fail} com erro.`,
+          "error",
+        );
+      } else if (fail) {
+        setOnemusStatus("Não foi possível baixar. Tente outro link ou mais tarde.", "error");
+      } else {
+        setOnemusStatus(`${ok} música(s) salva(s) na pasta «${outputFolderName}».`, "ok");
+      }
+    }
+
+    onemusUrlInput.addEventListener("input", scheduleOnemusInputLoad);
+    onemusUrlInput.addEventListener("paste", () => {
+      clearTimeout(onemusInputTimer);
+      onemusInputTimer = setTimeout(() => loadOnemusTracksFromInput(), 120);
+    });
+    onemusReplaceBtn.addEventListener("click", applyOnemusBulkReplace);
+    onemusAffixBtn.addEventListener("click", applyOnemusBulkAffixes);
+    onemusDownloadBtn.addEventListener("click", () => {
+      if (onemusBusy) return;
+      processOnemusDownloads();
+    });
+
+    renderOnemusTrackList();
+
     const TUTORIAL_STORAGE_KEY = "picatom-tutorial-v5";
     const tutorialOverlay = document.getElementById("tutorialOverlay");
     const tutorialSpotlight = document.getElementById("tutorialSpotlight");
@@ -9939,15 +11036,15 @@
       {
         section: "intro",
         mode: "picatom",
-        title: "Bem-vindo ao PicAtom, DesAtom, RedAtom e TonAtom",
-        body: `<p>Este tutorial cobre os quatro modos: <strong>PicAtom</strong> (remover fundo), <strong>DesAtom</strong> (retoque de borda), <strong>RedAtom</strong> (redimensionar e exportar) e <strong>TonAtom</strong> (ajustar tons em lote).</p><p>PicAtom, DesAtom e RedAtom compartilham o preview central. O TonAtom tem fluxo próprio para processar pastas de imagens.</p>`,
+        title: "Bem-vindo ao OnePic, OneDes, OneRed, OneTon, OneMov e OneMus",
+        body: `<p>Este tutorial cobre os seis modos: <strong>OnePic</strong>, <strong>OneDes</strong>, <strong>OneRed</strong>, <strong>OneTon</strong>, <strong>OneMov</strong> e <strong>OneMus</strong> (baixar áudio do YouTube).</p><p>OnePic, OneDes e OneRed compartilham o preview central. OneTon, OneMov e OneMus têm painéis dedicados.</p>`,
       },
       {
         section: "picatom",
         mode: "picatom",
         target: "#headerModes",
         title: "Alternar entre os modos",
-        body: `<p>Use <strong>PicAtom</strong>, <strong>DesAtom</strong>, <strong>RedAtom</strong> e <strong>TonAtom</strong> no topo. PicAtom, DesAtom e RedAtom compartilham o preview central; o TonAtom abre um painel dedicado para lote de cores.</p>`,
+        body: `<p>Use <strong>OnePic</strong>, <strong>OneDes</strong>, <strong>OneRed</strong>, <strong>OneTon</strong>, <strong>OneMov</strong> e <strong>OneMus</strong> no topo. OnePic, OneDes e OneRed compartilham o preview central; os outros modos abrem painéis dedicados.</p>`,
       },
       {
         section: "picatom",
@@ -10024,7 +11121,7 @@
         mode: "picatom",
         target: "#previewActions",
         title: "Exportar imagem",
-        body: `<p><strong>Baixar</strong> e <strong>Baixar para Discord</strong> exportam a imagem. Formato, dimensões, qualidade e DPI são definidos no modo <strong>RedAtom</strong>.</p>`,
+        body: `<p><strong>Baixar</strong> e <strong>Baixar para Discord</strong> exportam a imagem. Formato, dimensões, qualidade e DPI são definidos no modo <strong>OneRed</strong>.</p>`,
       },
       {
         section: "picatom",
@@ -10043,15 +11140,15 @@
       {
         section: "desatom",
         mode: "desatom",
-        title: "Parte 2 — DesAtom",
-        body: `<p>Agora o <strong>DesAtom</strong>: retoque fino nas bordas, removendo o halo de fundo que sobrou no recorte.</p><p>Usa a <strong>mesma imagem</strong> editada no PicAtom — não precisa carregar de novo. Depois, o <strong>RedAtom</strong> cuida do redimensionamento e da exportação.</p>`,
+        title: "Parte 2 — OneDes",
+        body: `<p>Agora o <strong>OneDes</strong>: retoque fino nas bordas, removendo o halo de fundo que sobrou no recorte.</p><p>Usa a <strong>mesma imagem</strong> editada no OnePic — não precisa carregar de novo. Depois, o <strong>OneRed</strong> cuida do redimensionamento e da exportação.</p>`,
       },
       {
         section: "desatom",
         mode: "desatom",
         target: "#desatomView",
-        title: "Painel do DesAtom",
-        body: `<p>Os controles de retoque ficam aqui à esquerda. A barra de ferramentas do PicAtom fica oculta; no topo do preview aparecem os botões <strong>Antes</strong> e <strong>Depois</strong>.</p>`,
+        title: "Painel do OneDes",
+        body: `<p>Os controles de retoque ficam aqui à esquerda. A barra de ferramentas do OnePic fica oculta; no topo do preview aparecem os botões <strong>Antes</strong> e <strong>Depois</strong>.</p>`,
       },
       {
         section: "desatom",
@@ -10086,14 +11183,14 @@
         mode: "desatom",
         target: "#desatomResetBtn",
         title: "Restaurar retoques",
-        body: `<p><strong>Restaurar original</strong> desfaz todos os retoques do DesAtom no histórico, voltando ao estado anterior ao primeiro retoque de borda neste modo.</p>`,
+        body: `<p><strong>Restaurar original</strong> desfaz todos os retoques do OneDes no histórico, voltando ao estado anterior ao primeiro retoque de borda neste modo.</p>`,
       },
       {
         section: "desatom",
         mode: "desatom",
         target: "#historyPanel",
         title: "Histórico",
-        body: `<p>Cada retoque de borda fica registrado junto com as edições do PicAtom e RedAtom. Clique com o botão direito em qualquer etapa para voltar ou removê-la.</p>`,
+        body: `<p>Cada retoque de borda fica registrado junto com as edições do OnePic e OneRed. Clique com o botão direito em qualquer etapa para voltar ou removê-la.</p>`,
       },
       {
         section: "desatom",
@@ -10105,14 +11202,14 @@
       {
         section: "redatom",
         mode: "redatom",
-        title: "Parte 3 — RedAtom",
-        body: `<p>O <strong>RedAtom</strong> redimensiona a imagem e define como exportar: formato, qualidade, DPI e presets para redes sociais, Discord, pixel art ou impressão.</p><p>Usa a mesma imagem editada nos modos anteriores.</p>`,
+        title: "Parte 3 — OneRed",
+        body: `<p>O <strong>OneRed</strong> redimensiona a imagem e define como exportar: formato, qualidade, DPI e presets para redes sociais, Discord, pixel art ou impressão.</p><p>Usa a mesma imagem editada nos modos anteriores.</p>`,
       },
       {
         section: "redatom",
         mode: "redatom",
         target: "#redatomView",
-        title: "Painel do RedAtom",
+        title: "Painel do OneRed",
         body: `<p>Controles de exportação ficam aqui à esquerda. No topo do preview, uma barra horizontal mostra tamanho, formato, estimativa de arquivo e metadados.</p>`,
       },
       {
@@ -10169,20 +11266,20 @@
         mode: "redatom",
         target: "#previewActions",
         title: "Baixar imagem",
-        body: `<p><strong>Baixar</strong> exporta com formato, dimensões, qualidade e DPI do RedAtom. <strong>Baixar para Discord</strong> otimiza o envio. Não é obrigatório clicar em Aplicar dimensões — o download usa as configurações atuais.</p>`,
+        body: `<p><strong>Baixar</strong> exporta com formato, dimensões, qualidade e DPI do OneRed. <strong>Baixar para Discord</strong> otimiza o envio. Não é obrigatório clicar em Aplicar dimensões — o download usa as configurações atuais.</p>`,
       },
       {
         section: "redatom",
         mode: "redatom",
         target: "#historyPanel",
         title: "Histórico",
-        body: `<p>Redimensionamentos ficam registrados junto com edições do PicAtom, DesAtom e RedAtom. Clique com o botão direito para voltar ou remover etapas.</p>`,
+        body: `<p>Redimensionamentos ficam registrados junto com edições do OnePic, OneDes e OneRed. Clique com o botão direito para voltar ou remover etapas.</p>`,
       },
       {
         section: "tonatom",
         mode: "tonatom",
-        title: "TonAtom",
-        body: `<p><strong>Origem</strong> = cor na referência. <strong>Alvo</strong> = cor no lote a trocar. Ajuste estilo Ctrl+U.</p>`,
+        title: "OneTon",
+        body: `<p><strong>Origem</strong> = cor na referência. <strong>Alvo</strong> = cor no lote a trocar. Manipulador de Matiz (Hue) e Saturação.</p>`,
       },
       {
         section: "tonatom",
@@ -10194,7 +11291,7 @@
       {
         section: "movatom",
         mode: "movatom",
-        title: "MovAtom",
+        title: "OneMov",
         body: `<p>Vídeo → frames → remove fundo → troca cor de fundo → exporta <strong>MP4</strong>. Clique no frame para escolher a cor do fundo.</p>`,
       },
       {
@@ -10205,10 +11302,30 @@
         body: `<p><strong>Salvar MP4</strong> abre a pasta no Windows, processa todos os frames e gera o vídeo.</p>`,
       },
       {
+        section: "onemus",
+        mode: "onemus",
+        title: "OneMus",
+        body: `<p>Cole links do <strong>YouTube</strong> à esquerda — as faixas aparecem à direita com <strong>loading</strong> ao carregar. Renomeie em lote e depois clique em <strong>Baixar músicas</strong>.</p>`,
+      },
+      {
+        section: "onemus",
+        mode: "onemus",
+        target: "#onemusTrackList",
+        title: "Lista e renomear",
+        body: `<p>Cada música tem nome editável e barra de progresso. Use <strong>Substituir</strong> (palavra-chave) ou <strong>Adicionar</strong> (início/fim) para renomear várias de uma vez.</p>`,
+      },
+      {
+        section: "onemus",
+        mode: "onemus",
+        target: "#onemusDownloadBtn",
+        title: "Baixar músicas",
+        body: `<p>Escolha a pasta no Windows. O OneMus cria <strong>OneMus + data/hora</strong> automaticamente e salva com os nomes da lista.</p>`,
+      },
+      {
         section: "done",
         mode: "picatom",
         title: "Tutorial concluído",
-        body: `<p><strong>PicAtom</strong>, <strong>DesAtom</strong>, <strong>RedAtom</strong>, <strong>TonAtom</strong> e <strong>MovAtom</strong> — clique em <strong>Concluir</strong> para começar.</p>`,
+        body: `<p><strong>OnePic</strong>, <strong>OneDes</strong>, <strong>OneRed</strong>, <strong>OneTon</strong>, <strong>OneMov</strong> e <strong>OneMus</strong> — clique em <strong>Concluir</strong> para começar.</p>`,
       },
     ];
 
@@ -10284,23 +11401,27 @@
           const isRedatom = step.section === "redatom";
           const isTonatom = step.section === "tonatom";
           const isMovatom = step.section === "movatom";
+          const isOnemus = step.section === "onemus";
           tutorialSectionBadge.textContent = isIntro
-            ? "PicAtom · DesAtom · RedAtom · TonAtom · MovAtom"
+            ? "OnePic · OneDes · OneRed · OneTon · OneMov · OneMus"
             : isDone
               ? "Concluído"
               : isDesatom
-                ? "DesAtom"
+                ? "OneDes"
                 : isRedatom
-                  ? "RedAtom"
+                  ? "OneRed"
                   : isTonatom
-                    ? "TonAtom"
+                    ? "OneTon"
                     : isMovatom
-                      ? "MovAtom"
-                      : "PicAtom";
+                      ? "OneMov"
+                      : isOnemus
+                        ? "OneMus"
+                        : "OnePic";
           tutorialSectionBadge.classList.toggle("desatom", isDesatom);
           tutorialSectionBadge.classList.toggle("redatom", isRedatom);
           tutorialSectionBadge.classList.toggle("tonatom", isTonatom);
           tutorialSectionBadge.classList.toggle("movatom", isMovatom);
+          tutorialSectionBadge.classList.toggle("onemus", isOnemus);
           tutorialSectionBadge.classList.toggle("intro-all", isIntro);
 
           tutorialTitle.textContent = step.title;
